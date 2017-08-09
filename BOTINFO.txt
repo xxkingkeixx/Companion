@@ -1,0 +1,399 @@
+########################################################################################################################################
+
+Iceball project  , Chatango based bot written in Python  , the users companion
+
+########################################################################################################################################
+
+How to use commands: use ">" followed by commands
+
+Admin roles:
+moderator ,administrator , superuser
+
+Moderator: A moderator can use commands normal ppl can't use  , but they cannot use commands that tamper or ask for memory types or use broadcast commands. They can't promote or add admins either. All cmds that they dont have access to will not be shown when they use the cmd function
+
+Administrator: An admin can add moderators , but cannot add admins. An admin can also broadcast with the bot to all chats. An admin can also remove moderators  , and report other admins abusing their power. An admin cannot  , import code to the bot  , or use experimental commands. An admin CAN alter the social feed. Most commands will be shown to admins
+
+SuperUser: A superuser can add admins and mods. A superuser can use any command and create  , or import commands and functions. A superuser can also alter any information given to the bot. All commands will be shown  
+
+
+Cmds to be: help , generalcmds , pmcmds , say , randomnum , ai (difficulty over 9000) , offai , range , math , import , pm , yt , gi , ud , gs , reddit , addAdmin , removeAdmin , admin+ , admin- , listroles ,listchats ,blacklist , sleep , profilepic , ipInfo  , whois , whereis , whoami , fMembers , DDOS (experimental) ,  socialmedia , broadcast , awaketime , datetime , random question , rpg , ..
+
+Chat to PM integration Commands:
+   listfriends , listlovers  , listhaters  ,listHatings  ,liststalkers  ,listcrushes  ,listrejections  ,listexes  ,followers  ,follow  ,myfollowers  , showfollowers  , feed  , popularity  ,checkpopularity  ,mostHated  ,mostLoved  , topTrolls  ,status  ,mood  ,age  , schedule  , randompic  , listFavoriteThings  , showUserComment  , showRecentComments  ,showCurrency  ,currency  ,rlpic , nickname , whyhate , whylove , whystalk , whyfriend ,whyreject , Goodnight , goodnightAll , goodmorning , goodmorningAll , +friend ,-friend ,+lover ,-lover ,+hater ,-hater ,+stalker ,-stalker ,+crush ,-crush ,+ex ,-ex ,+reject ,-reject , +randompic ,+status ,+mood ,+favoritething ,-favoritething ,+userComment ,-userComment ,+comment ,-whyhate ,-whylove ,-whystalk ,-whyfriend ,voteHate ,votedLove ,voteTroll , unfollow , blockfollow , unblockfollow , nofollow...
+   
+ Merchant Cmds:
+ Promote, Jobs, Lottery, GuessTheNumber,Gift,Sell,Buy
+   
+   
+   
+ Command usages:
+------------------------------------------------------------------------------------------------------------------------------------------ 
+ generalcmds : lists general commands that aren't too complex or aren't necessarily made for pm integration
+------------------------------------------------------------------------------------------------------------------------------------------ 
+ pmcmds : lists commands that are more advanceds and are used to update pm integration
+-----------------------------------------------------------------------------------------------------------------------------------------
+ help : tells users that A. This is a bot B. use generalcmds or pmcmds and links bot website
+-----------------------------------------------------------------------------------------------------------------------------------------
+ say : bot repeats what the user said
+ usage-  >say somethinghere
+-----------------------------------------------------------------------------------------------------------------------------------------
+ randomnum- picks a random number between the max number you give it
+ usage-   >randomnum 20
+ ---------------------------------------------------------------------------------------------------------------------------------------
+ ai : bot replies intelligently when you speak to it. this development won't be focused on until later.
+ usage- >ai 
+ -----------------------------------------------------------------------------------------------------------------------------------------
+ offai : turns ai mode off
+usage - >offai
+------------------------------------------------------------------------------------------------------------------------------------------
+range: picks a number between the two numbers you give it
+usage-  >range 75 100
+------------------------------------------------------------------------------------------------------------------------------------------
+math: basically a calculator
+usage- >math 666*100/420
+------------------------------------------------------------------------------------------------------------------------------------------
+import: create a file remotely , slap an import statement to the top of the basefile and restart the bot . don't know if this will actually work , SuperUser only
+usage- >import codehere filename
+------------------------------------------------------------------------------------------------------------------------------------------
+pm : Send a personal message with the bot to someone. Only works in chatroom. Don't think ill allow this command in pm's it might get abused. (ex: person gets their acc blocked and uses the bot to talk to them)
+usage- >pm usernamehere yourmessagehere
+------------------------------------------------------------------------------------------------------------------------------------------
+yt: picks the first youtube link from youtube results and posts it  , given the keyword you give it
+usage- >yt gangnam style
+------------------------------------------------------------------------------------------------------------------------------------------
+gi: picks a google image and posts it from google images , given the keyword. may make this pic a random pic instead of the first.
+usage- >gi running doggos
+------------------------------------------------------------------------------------------------------------------------------------------
+ud: picks the first definition from urban dictionary and posts it  , given the keyword. also may make this random.
+usage- >ud asshole
+------------------------------------------------------------------------------------------------------------------------------------------
+gs: performs a google search and posts the first result it comes up with  , and posts it  , given the search term
+usage- >gs how 2 drink bleach 101
+------------------------------------------------------------------------------------------------------------------------------------------
+reddit: performs a reddit search and... shit didnt think this one out ... come back to this later..
+usage- >reddit args
+------------------------------------------------------------------------------------------------------------------------------------------
+addAdmin: takes the given username  , and makes a person the specified role 
+usage- >addAdmin usernamehere rolehere
+------------------------------------------------------------------------------------------------------------------------------------------
+removeAdmin: takes the given username and removes from any role that may be present
+usage >removeAdmin usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+admin+: makes the user specified go up a role
+usage - >admin+ usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+admin-: makes the user specified go down a role
+usage- >admin- usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+listroles: lists mods  , admins  , superusers , and the creator.
+usage- >listroles
+------------------------------------------------------------------------------------------------------------------------------------------
+listchats: lists the current chats the bot is present in
+usage- >listchats
+------------------------------------------------------------------------------------------------------------------------------------------
+blacklist: basically a giant middle finger to anyone who somehow gets on this list. user is banned from using the bot period. Admins only command 
+usage- >blacklist username
+------------------------------------------------------------------------------------------------------------------------------------------
+profilepic: posts the specified users profile pic in the chatroom
+usage- >profilepic username
+------------------------------------------------------------------------------------------------------------------------------------------
+ipInfo: Takes specified IP and gives basic information
+usage- >ipInfo IPHERE
+------------------------------------------------------------------------------------------------------------------------------------------
+whois: takes the specified username and lists alt accs of user
+usage: >whois usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+whereis: takes specified username and gives the usernames approximate location. admin only command
+usage: >whereis username
+------------------------------------------------------------------------------------------------------------------------------------------
+whoami: gives your username  , real name if already supplied  , nickname  , and what your role is if applicable , and how many followers you have. also lists if you are in the top 25 most popular.
+usage: >whoami
+------------------------------------------------------------------------------------------------------------------------------------------
+fMembers: Takes username and lists the users family members if applicable. admin only command
+usage: >fMembers usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+DDOS: experimental command that neutralizes target , SuperUser command 
+usage: >DDOS usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+socialmedia: list users social media and usernames if supplied
+usage: >socialmedia username
+------------------------------------------------------------------------------------------------------------------------------------------
+broadcast: announces a message globally (experimental , global may mean  , to all chats  , and anyone who is using the bot period  , which would be very cpu intensive) only for admins and superusers
+usage: >broadcast messagehere
+------------------------------------------------------------------------------------------------------------------------------------------
+awaketime: bot will say how long she's been awake since last reboot
+usage: >awaketime
+------------------------------------------------------------------------------------------------------------------------------------------
+datetime: declares the current date and time  , this will probably only be relative to the bot though..
+usage: >datetime
+------------------------------------------------------------------------------------------------------------------------------------------
+randomquestion:  ask a random question in the chat , may either be a list or pulled as a header from quora
+usage: >randomquestion
+------------------------------------------------------------------------------------------------------------------------------------------
+rpg: a roleplaying game  , pretty extensive  , so maybe made in the future...
+usages: to be decided  , will be many
+------------------------------------------------------------------------------------------------------------------------------------------
+listfriends: lists the users friends that the user has supplied
+usages- >listfriends username
+------------------------------------------------------------------------------------------------------------------------------------------
+listlovers: lists the user(s) that the user has supplied
+usage- >listlovers username
+------------------------------------------------------------------------------------------------------------------------------------------
+listhaters: list the users haters that the user has supplied
+usage- >listhaters usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+listhates: list the users that the user hates  , that the user has supplied
+usage- >listhates usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+liststalkers: list the users that the user suspects is stalking them , that they have supplied
+usage- >liststalkers usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+listcrushes: list the crushes a user has  ,  if supplied
+usage- >listcrushes usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+listexes: list the exes the user has  , if supplied
+usage- >listexes usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+followers: lists how many followers a user has
+usage- >followers usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+follow: follows the specified user to be updated when they change their status  , or basically anything about themselves. (status , mood , favoritething , nickname , profilepic , crush etc..) probably need to make a command to pick certain things  , or just follow without updates.
+usage- >usage usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+feed: lists the last 5 things any user globally using the bot has done.
+usage- >feed
+
+------------------------------------------------------------------------------------------------------------------------------------------
+myfollowers: shows how many followers you have
+usage- >myfollowers
+------------------------------------------------------------------------------------------------------------------------------------------
+showfollowers: lists all of your followers  , this will probably just be a pm only command to avoid walls of texts in chatrooms.
+usage- >showfollowers
+------------------------------------------------------------------------------------------------------------------------------------------
+popularity: shows the top 25 most popular people on chatango based on amount of followers
+usage- >popularity
+------------------------------------------------------------------------------------------------------------------------------------------
+checkpopularity: shows the popularity rank of a certain person based on followers.
+usage ->checkpopularity usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+mostHated: shows the top 25 most hated users , based off of votes.
+usage- >mostHated
+------------------------------------------------------------------------------------------------------------------------------------------
+mostLoved: shows the top 25 most loved users based off of votes.
+usage- >mostLoved
+------------------------------------------------------------------------------------------------------------------------------------------
+topTrolls: shows the top 25 trolls based off of votes
+usage- >topTrolls
+------------------------------------------------------------------------------------------------------------------------------------------
+status: shows the a specific users status
+usage- >status usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+mood: shows the specific users mood
+usage- >mood usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+age: show users age(hopefully real)
+usage- >age usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+schedule: schedule an event and have the bot remind you
+when , in however many minutes supplied
+usage- >schedule minuteshere eventhere
+------------------------------------------------------------------------------------------------------------------------------------------
+randompic: show a random pic from the pictures users have supplied in the random pic library
+usage- >randompic
+------------------------------------------------------------------------------------------------------------------------------------------
+listfavoritethings: list a users favorite things
+usage- >listfavoritethings usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+listrejections: list the users a user has rejected.
+usage: >listrejections usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+userreviews: shows a list of people who have commented about the user
+usage- >UserComments usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+showuserreview: shows a comment about someone from a specific person. use the userreviews command to find out who has commented first.
+usage- >showuserreview nameofreviewer nameofpersonreviewed
+------------------------------------------------------------------------------------------------------------------------------------------
+showrecentcomments: shows recent random comments made on the site
+usage- >showrecentcomment
+------------------------------------------------------------------------------------------------------------------------------------------
+showCurrency: show how much currency someone has (not decided yet on what the currency will be and its usage)
+usage- >showCurrency usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+currency: show much much currency you have
+usage- >currency 
+------------------------------------------------------------------------------------------------------------------------------------------
+rlpic: shows real life pic of a person if supplied
+usage- >rlpic usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+nickname: give a nickname the bot will remember you as
+usage- >nickname yournicknamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+whyhate: reveals why a user hates a certain user they listed.
+usage- >whyhate usernamehere whotheyhatehere
+------------------------------------------------------------------------------------------------------------------------------------------
+whylove: reveals why a user loves a certain user they listed.
+usage- >whylove usernamehere whotheylovehere
+------------------------------------------------------------------------------------------------------------------------------------------
+whystalk: reveals why a user thinks a certain user is stalking them.
+usage- >whystalk usernamehere whotheyaccusehere
+------------------------------------------------------------------------------------------------------------------------------------------
+whyreject: reveals why a user rejected a user.
+usage- >whyreject username whotheyrejected
+------------------------------------------------------------------------------------------------------------------------------------------
+whyfriend: reveals why they consider a certain user a friend
+usage- >whyfriend usernamehere whotheirfriendsishere
+------------------------------------------------------------------------------------------------------------------------------------------
+goodnight: automatically tell everyone you have listed as a friend or a lover Goodnight with the bot.
+usage- >Goodnight
+------------------------------------------------------------------------------------------------------------------------------------------
+goodnightAll: automatically tell everyone you have listed as a friend  , lover AND all your followers goodnight with the bot... please don't spam this shit..or overuse it  , or it will be removed..
+usage- >goodnightAll
+------------------------------------------------------------------------------------------------------------------------------------------
+goodmorning: tell everyone you have listed as a friend or lover , goodmorning automatically with the bot.
+usage- >goodmorning
+------------------------------------------------------------------------------------------------------------------------------------------
+goodmorningAll: tell everyone you have listed as a friend lover AND all your followers goodmorning. ... same warning...
+usage- >goodmorningAll
+------------------------------------------------------------------------------------------------------------------------------------------
++friend: add a friend to your list of friends so people can see
+usage- >+friend usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+-friend: remove a friend from your list of friends
+usage- >-friend usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
++lover: add a lover to your list of lovers
+usage- >+lover usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+-lover: remove a lover from your list of lovers
+usage- >-lover usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
++hater: add a hater to your list of haters
+usage- >+hater usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+-hater: remove a hater from your list of haters
+usage- >-hater usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
++stalker: add a stalker to your list of stalkers
+usage- >+stalker usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+-stalker: remove a stalker from your list of stalkers
+usage- >-stalker usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
++crush: add a crush to your list of crushes 
+usage- >+crush usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+-crush: remove a crush from your list of crushes
+usage- >-crush usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
++reject: add someone to the list of people you've rejected
+usage- >+reject usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+-reject: remove someone from your list of rejections
+usage- >-reject usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
++ex: add a person to your list of ex's
+usage- >+ex usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+-ex: remove a person from your list of ex's
+usage- >-ex usernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
++whyhate: explain why you hate a certain person
+usage- >+whyhate usernamehere explainhere
+------------------------------------------------------------------------------------------------------------------------------------------
+-whyhate: remove a whyhate entry here
+usage- >-whyhate theirusernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
++whylove: explain why you love someone here
+usage- >+whylove theirusernamehere explainhere
+------------------------------------------------------------------------------------------------------------------------------------------
+-whylove: remove a whylove entry
+usage- >-whylove theirusernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
++whystalk: explain why you think a certain person is stalking you
+usage- >+whystalk theirusernamehere explainhere
+------------------------------------------------------------------------------------------------------------------------------------------
+-whystalk: remove a whystalk entry
+usage- >-whystalk theirusernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
++whyfriend: explain why you consider someone a friend
+usage- >+whyfriend theirusernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+-whyfriend: remove a whyfriend entry 
+usage- >-whyfriend theirusernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
++whyreject: explain why you rejected a person
+usage- >+whyreject theirusernamehere explainhere
+------------------------------------------------------------------------------------------------------------------------------------------
+-whyreject: remove a whyreject entry 
+usage- >whyreject theirusernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+
++status: update your status
+usage- >+status yourstatus
+------------------------------------------------------------------------------------------------------------------------------------------
++mood: update your mood
+usage- >+mood yourmood
+------------------------------------------------------------------------------------------------------------------------------------------
++favoritething: update your favorite things
+usage- >favoritething whatever its is here
+------------------------------------------------------------------------------------------------------------------------------------------
+-favoritething: remove something from your list of favoritethings
+usage- >-favoritething
+------------------------------------------------------------------------------------------------------------------------------------------
++usercomment: add a comment about a user here
+usage- >+usercomment theirusernamehere yourcommenthere
+------------------------------------------------------------------------------------------------------------------------------------------
+-usercomment: remove a comment about a user here
+usage- >-usercomment theirusernamehere yourcommenthere
+------------------------------------------------------------------------------------------------------------------------------------------
++comment: add a random comment to the global feed that people can see
+usage- >-usercomment yourcommenthere
+------------------------------------------------------------------------------------------------------------------------------------------
+unfollow: unfollow a user 
+usage- >unfollow theirusernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+blockfollow: block someone from being able to follow you
+usage- >blockfollow theirusernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+unblockfollow: allow someone you previously didnt want following you to follow you
+usage- >unblockfollow theirusernamehere
+------------------------------------------------------------------------------------------------------------------------------------------
+nofollow: don't allow anyone to follow you
+usage- >nofollow
+------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
