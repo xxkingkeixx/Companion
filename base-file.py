@@ -1,7 +1,9 @@
-###########################################################################################
-# import  NICKS IMRPOVED CODE TO PYCHARM
+"""
+@projectname: Companion
+@hostsite: Chatango.com
 
-#############################################################################################
+
+"""
 import ch
 import pathlib
 from pathlib import Path
@@ -34,164 +36,117 @@ import math
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
 from xml.etree import cElementTree as ET
-
+from configparser import ConfigParser
 import urllib2 as urlreq
+from mysql.connector import MySQLConnection, Error
 
-##################################################################
 
-# change FONT color NAME color , size ETC
+def read_db_config(filename='config.ini', section='mysql'):
+    """ Read database configuration file and return a dictionary object
+    @param filename: name of the configuration file
+    @param section: section of database configuration
+    @return: a dictionary of database parameters
+    """
+    # create parser and read ini configuration file
+    parser = ConfigParser()
+    parser.read(filename)
+ 
+    # get section, default to mysql
+    db = {}
+    if parser.has_section(section):
+        items = parser.items(section)
+        for item in items:
+            db[item[0]] = item[1]
+    else:
+        raise Exception('{0} not found in the {1} file'.format(section, filename))
+ 
+    return db
 
-##################################################################
+def connect():
+    """ Connect to MySQL database """
+ 
+    db_config = read_db_config()
+ 
+    try:
+        print('Connecting to MySQL database...')
+        conn = MySQLConnection(**db_config)
+ 
+        if conn.is_connected():
+            print('connection established.')
+        else:
+            print('connection failed.')
+ 
+    except Error as error:
+        print(error)
+ 
+    finally:
+        conn.close()
+        print('Connection closed.')
+ 
+ 
+if __name__ == '__main__':
+    connect()
+
+#end
 
 class bot(ch.RoomManager):
+  
+  
+  
   def onInit(self):
     self.setNameColor("FFFFFF")
     self.setFontColor("FF0000")
     self.setFontFace("arial")
     self.setFontSize(9)
+    
+  """
+  @param self: Bot 
+  @param room: The Chatroom
+  @param user: The Chatango user
+  @param message: The message in the chatroom
+  
 
-################################################################################
-
-#When someone messages in chat
-
-################################################################################
+  """
 
   def onMessage(self, room, user, message):
-    
-                
-    userTest = Path("UserDB/"+user.name+".txt")
-    if userTest.exists():
-      pass # Put here to avoid a syntax 
-    #something
-      
-    
-      
-      
-    else:
-      for fname in os.listdir('UserIP/'):    
-        if os.path.isfile(fname):   
-          with open(fname) as f:   
-            for line in f:      
-              if message.ip in line:    
-                print '%s' %fname
-              else:
-                nameTheFile = user.name
-                with io.FileIO("UserDB/"+nameTheFile+".txt", "a") as file:
-                  file.write(nameTheFile+" ")
-                with io.FileIO("UserIP/"+nameTheFile+"-IP"+".txt", "a") as file:  
-                  file.write(message.ip) 
-           
-      
     try:
       cmd, args = message.body.split(" ", 1)
     except:
       cmd, args = message.body, ""      
     print("[{}] {}: {}: {}".format(room.name, user.name.title(), message.body, message.ip))      
     
-      
-      
-     
-################################################################################
-
-# ">" is set as the command toggle.  
-
-################################################################################
+    """
+    @param prfx: The Command init
+    @param cmd: The second part of the body
+    @param _: The argument after the command
+    
+    """
+    
     prfx = cmd[0] == ">"
     cmd = cmd[1:] if prfx else cmd
+    _ = args
 
-###############################################################################
-
-
-#Cmds
-
-
-################################################################################
-
-
-#deleted for now
-
-
-################################################################################
-
-#auth system
-
-################################################################################
-
-
-#deleted for now
-
-
-################################################################################
-      
-       
-################################################################################
-
-#The SAY command. 
-
-################################################################################
-
-    if cmd.lower() == "say" and prfx:
-      if len(args) > 25:
-        room.message("Too long >:(")
-      else:
-        room.message(args)
-       
-        
-    elif cmd.lower() == "test" and prfx:
-      userTest = Path("UserDB/"+user.name+".txt")
-      if userTest.exists():
-        room.message('This user exists')
-      else:
-        room.message("Error")
+    """
+    @param name: the username
+    @param pm: chatango pm
     
-    elif cmd.lower() == "import" and prfx:
-        room.message("Failed you have me in test mode..") 
-    
-    
-     
-################################################################################
-
-#The PM command.
-################################################################################
-   
-    elif prfx and cmd=="pm" and len(args) > 0:
+    """
+    def pmcmd(_): 
       try:
-        #name 
-        name = args.split()[0].lower()
-        # personal message 
-        
-        personalm = " ".join(args.split()[1:])
-        
+        name = _.split()[0].lower()
+        personalm = " ".join(_.split()[1:])
         self.pm.message(ch.User(name), "Origin: MSG FROM THE MASTER" + personalm.capitalize()+"\"")
-        #tell the room 
         room.message("Message sent to "+name.capitalize()+"!")
       except:
         room.message("Error sending message.")  
         
-################################################################################
-
-#pick random number  test
-  
-        
-################################################################################
-
-    elif prfx and cmd == "random":
-      a = random.randrange(int(args))
-      room.message(str(a))
-      
-    elif prfx and cmd.lower() =="rooms":
-      length = len(rooms)
-      room.message("I'm in " +" "+ str(length) +" rooms"+" , "+ ", ".join(rooms))
-      
-##########################################################################################
-
-
-#The YT command
-
-
-##########################################################################################
-
-    elif prfx and cmd=="yt":
+    """ 
+    Outputs Query Result from youtube keyword search 
+    @module beautifulsoup
+    
+    """
+    
+    def yt(_):
       textToSearch = args.replace(" ","_")
       query = urllib.quote(textToSearch)
       url = "https://www.youtube.com/results?search_query=" + query
@@ -201,8 +156,66 @@ class bot(ch.RoomManager):
       for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'} ,limit=1):
         room.message( 'https://www.youtube.com' + vid['href'])
         
+    """ 
+    SQL INSERT FUNCTION
+    
+    @param tablename: The target SQL table
+    @param column: The target column in the table
+    @param _: The user input
+    @return: Returns confirmation that the record was added to the SQL table
+    """
+    
+    def insert(tablename,column,_):
+      if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table",""," ")) ):
+        room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
+      else:
+        try:
+          dbconfig = read_db_config()
+          conn = MySQLConnection(**dbconfig)
+          cursor = conn.cursor()
+          cursor.execute('INSERT INTO {}({}) VALUES("{}") '.format(tablename,column,_))
+          conn.commit()
+          room.message("Added {} to {}.".format(_,tablename))      
+            
+        except Error as e:
+          room.message(e)
+        finally:
+          cursor.close()
+          conn.close() 
+    
         
-#ON ROOM CONNECT MESSAGE                
+        
+    """
+    The bot commands
+    @param result: runs function based on command
+    @func lambda: Runs arguments if any in command
+    @return: Returns output if command in dictionary
+    
+    """
+
+    result = {
+    prfx and 'say': lambda _:  _,
+    prfx and 'test': lambda _: 'Working!',
+    prfx and 'pm': lambda _: pmcmd(_),
+    prfx and 'random': lambda _: str(random.randrange(int(_))),
+    prfx and 'rooms': lambda _:  "I'm in "+ str(len(rooms)) +" rooms , " + ", ".join(rooms),
+    prfx and 'yt': lambda _: yt(_),
+    prfx and 'wallofshame': lambda _: insert('wallofshame','message',_)
+    
+    }[cmd](_)
+
+    room.message(result)
+     
+    
+    
+   
+    
+     
+        
+   
+   
+        
+             
   def onConnect(self,room):
     room.message("SYSTEMS ONLINE: Migrate your flavors im hungry :(")
     print("ONLINE")
@@ -211,14 +224,10 @@ class bot(ch.RoomManager):
     room.message("Welcome "+" "+" "+user.name.capitalize())
 
 
- ################################################################################
 
 
-#PM Log System/Auth System/Ping
-
-
-################################################################################
-
+  
+   
     
   def onPMMessage(self, pm, user, body):
         self.setNameColor("FFFFFF")
@@ -226,69 +235,13 @@ class bot(ch.RoomManager):
         self.setFontFace("arial")
         self.setFontSize(9)
         
-        if body.startswith("_addToPing"):
-          
-          auth = open('auth.txt', 'a')
-          
-          nameValue = " ".join(body.split()[1:])
-          
-          authFormatting = "\n"+ nameValue
-        
-          auth.write(authFormatting)
-          
-          
-          auth.close()
-          
-          
-          
-          pm.message(user, nameValue+ " has been authorized to PING")
-          
-        elif body.startswith("_p3"):
-          nameTheFile = " ".join(body.split()[1:])
-          
-          
-          with io.FileIO("UserTables/"+nameTheFile+".txt", "w") as file:
-            file.write("3")
-            
-            auth = open('auth2.txt', 'a')
-          
-            nameValue = " ".join(body.split()[1:])
-          
-            authFormatting = "\n"+ nameValue
-        
-            auth.write(authFormatting)
-          
-          
-            auth.close()
-          
-          pm.message(user, nameValue+ " has been given 3 Pings")
-          
-          self.pm.message(ch.User(nameValue), "You have been given 3 Pings by an Administrator. Use them by sending me a msg with _ping . Enjoy! *Testing ignore this* ")
         
         
+         
           
-          
-        elif body.startswith("_p"):
-          n = user.name
-          numFile = open("UserTables/"+user.name+".txt", 'r+')
-          numFileWrite = open ("UserTables/"+user.name+".txt", 'w+')
-          numVal = numFile.read()
-          
-          if n in open("auth2.txt").read():
-            
-            if '3' in open("UserTables/"+user.name+".txt").read():
-              numFileWrite('2')
-              pm.message(user, "You have "+numVal+" pings left")
+       
              
-            elif '2' in open("UserTables/"+user.name+".txt").read():
-              numFileWrite('1')
-              pm.message(user, "You have "+numVal+" pings left" )
-              
-            elif "1" in open("UserTables/"+user.name+".txt").read():
-              numFileWrite('0')
-              pm.message(user, "You have "+numVal+" pings left. Purchase more for continued access!" )
-             
-        elif "tube.com" in body:
+        if "tube.com" in body:
           removespaces = body.replace(" ","")
           pm.message(user, "Message Relayed to Master and Parent Chats :)")
             
@@ -313,17 +266,7 @@ class bot(ch.RoomManager):
           print("[PM]"+user.name.capitalize()+": "+body) 
            
         
-        elif body.startswith("_ping"):
-          u = user.name
-          
-          if u in open('auth.txt').read():
-            
-            fc = open('ADMINLOG.txt', 'r')
-            file_contents = fc.read()
-            pm.message(user, "You are an Authorized user. Current Secrets revealed :" + file_contents)
-            fc.close()
-          else:
-            pm.message(user, "You are not Authorized to use this command. Visit http://suko.tv/secrets for more details.")
+        
               
           
         else:
