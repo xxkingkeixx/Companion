@@ -1,17 +1,13 @@
-command = raw_input("Enter CMD here: ")
-cmd = command[0:]
+a = raw_input("Add your command with arguments here")
 
-prfx = cmd[0] == ">"
-cmd = cmd[1:] if prfx else cmd
-try:
-    cmd, _ = cmd.split(" ", 1)
-except:
-      cmd, _ = cmd, ""
 
-result = {
-  prfx and 'a': lambda _: int(_) * 5,
-  prfx and 'b': lambda _:'hi',
-  prfx and 'c': lambda _: _ - 2
-}[cmd](_)
-
-print result
+def check(a):
+    if a == 'lol':
+        return True
+    else:
+        return False
+        
+if check(a):
+    print 'True!'
+else:
+    print 'False!'

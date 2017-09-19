@@ -113,7 +113,26 @@ class bot(ch.RoomManager):
       cmd, args = message.body.split(" ", 1)
     except:
       cmd, args = message.body, ""      
-    print("[{}] {}: {}: {}".format(room.name, user.name.title(), message.body, message.ip))      
+    print("[{}] {}: {}: {}".format(room.name, user.name.title(), message.body, message.ip))
+    """
+    try:
+        a = "users" 
+        b = "username" 
+        c = "ip" 
+        d = user.name.title() 
+        e = message.ip
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO {}({},{}) VALUES("{}","{}") '.format(a,c,b,e,d))
+        conn.commit()
+          
+    except Error as e:
+      room.message(e)
+    finally:
+      cursor.close()
+      conn.close()
+    """
     
     """
     @param prfx: The Command init
@@ -155,7 +174,16 @@ class bot(ch.RoomManager):
       soup = BeautifulSoup(html, "html5lib")
       for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'} ,limit=1):
         room.message( 'https://www.youtube.com' + vid['href'])
-        
+    """
+    SQL INJECTION WORD SEARCH/ check for empty function
+    """
+    def safe(_):
+      if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) or _ == "" ):
+        return True
+      else:
+        return False
+      
+    
     """ 
     SQL INSERT FUNCTION
     
@@ -166,7 +194,7 @@ class bot(ch.RoomManager):
     """
     
     def insert(tablename,column,_):
-      if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table",""," ")) ):
+      if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) or _ == "" ):
         room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
       else:
         try:
@@ -182,8 +210,76 @@ class bot(ch.RoomManager):
         finally:
           cursor.close()
           conn.close() 
+    """
+    SQL SELECT FUNCTION
+    Simple Select without user parameters
+    @return: returns list of elements in table and the sum
+    """
+    def simpleSelect(tablename,column,_):
+      if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) ):
+        room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
+      else:
+        try:
+          dbconfig = read_db_config()
+          conn = MySQLConnection(**dbconfig)
+          cursor = conn.cursor()
+          cursor.execute('SELECT {} FROM({}) ORDER BY id DESC LIMIT 3'.format(column,tablename))
+          rows = cursor.fetchall()
+ 
+          if tablename == 'wallofshame':
+            room.message('Here are the last 3 messages added to the Wall of Shame. To view the Wall , go to http://chatangu.tk/wallofshame')
+          else:
+            room.message('Last 3 records')
+          for row in rows:
+            room.message(str(row[0]))
+          
+        except Error as e:
+          room.message(e)
+        finally:
+          cursor.close()
+          conn.close()
     
-        
+    """
+    Add admin Command 
+    """
+    def addadmin(tablename,column,_):
+      _ , __ = _.split(" ", 1)
+      print(safe(_))
+      if(safe(_)):
+        room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
+      else:  
+        try:
+          print(safe(_))
+          dbconfig = read_db_config()
+          conn = MySQLConnection(**dbconfig)
+          cursor = conn.cursor()
+          cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}"'.format(column,tablename,column,_))
+          rows = cursor.fetchone()
+            
+          if(rows == None):
+            room.message('That user doesn\'t exist')
+          else:
+            if(__ == ('moderator')):
+              cursor.execute('UPDATE {} SET su = 1 WHERE {} = "{}"'.format(tablename,column,_))
+              conn.commit()
+              room.message('Set {} as Moderator!'.format(_))
+            elif(__ == ('admin')):
+              cursor.execute('UPDATE {} SET su = 2 WHERE {} = "{}"'.format(tablename,column,_))
+              conn.commit()
+              room.message('Set {} as Administrator!'.format(_))
+            elif(__ == ('superuser')):
+              cursor.execute('UPDATE {} SET su = 3 WHERE {} = "{}"'.format(tablename,column,_))
+              conn.commit()
+              room.message('Set {} as a SuperUser.. are you sure you meant to do this?'.format(_))  
+            
+        except Error as e:
+          room.message(str(e))
+        finally:
+          cursor.close()
+          conn.close()
+      
+  
+      
         
     """
     The bot commands
@@ -200,7 +296,9 @@ class bot(ch.RoomManager):
     prfx and 'random': lambda _: str(random.randrange(int(_))),
     prfx and 'rooms': lambda _:  "I'm in "+ str(len(rooms)) +" rooms , " + ", ".join(rooms),
     prfx and 'yt': lambda _: yt(_),
-    prfx and 'wallofshame': lambda _: insert('wallofshame','message',_)
+    prfx and '+wos': lambda _: insert('wallofshame','message',_),
+    prfx and 'wos': lambda _: simpleSelect('wallofshame','message',_),
+    prfx and 'addadmin': lambda _: addadmin('users','username',_) 
     
     }[cmd](_)
 
@@ -219,9 +317,9 @@ class bot(ch.RoomManager):
   def onConnect(self,room):
     room.message("SYSTEMS ONLINE: Migrate your flavors im hungry :(")
     print("ONLINE")
-#Welcome guests who join the chat    
+   
   def onJoin(self, room, user):
-    room.message("Welcome "+" "+" "+user.name.capitalize())
+    room.message("Welcome "+ user.name.capitalize())
 
 
 
