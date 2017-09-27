@@ -174,15 +174,7 @@ class bot(ch.RoomManager):
       soup = BeautifulSoup(html, "html5lib")
       for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'} ,limit=1):
         room.message( 'https://www.youtube.com' + vid['href'])
-    """
-    SQL INJECTION WORD SEARCH/ check for empty function
-    """
-    def safe(_):
-      if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) or _ == "" ):
-        return True
-      else:
-        return False
-      
+   
     
     """ 
     SQL INSERT FUNCTION
@@ -223,33 +215,81 @@ class bot(ch.RoomManager):
           dbconfig = read_db_config()
           conn = MySQLConnection(**dbconfig)
           cursor = conn.cursor()
-          cursor.execute('SELECT {} FROM({}) ORDER BY id DESC LIMIT 3'.format(column,tablename))
+          cursor.execute('SELECT {} FROM({}) ORDER BY id DESC LIMIT 25'.format(column,tablename))
           rows = cursor.fetchall()
  
           if tablename == 'wallofshame':
-            room.message('Here are the last 3 messages added to the Wall of Shame. To view the Wall , go to http://chatangu.tk/wallofshame')
+            room.message('Here are the last 25 messages added to the Wall of Shame. To view the Wall , go to http://chatangu.tk/wallofshame')
+            results = []
+            count = 0
+            for row in rows:
+              count += 1
+              results.append(str(count)+ ": " + row[0])
+              
+            room.message('... '.join(results)) 
           else:
             room.message('Last 3 records')
-          for row in rows:
-            room.message(str(row[0]))
+            results = []
+            for row in rows:           
+              results.append(row[0])
+              
+            room.message(', '.join(results))  
           
         except Error as e:
           room.message(e)
         finally:
           cursor.close()
           conn.close()
+    """
+    Mods Coomand
+    
+    @return: Returns list of admins 
+    """
+    def mods(_):
+      try:
+          
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()  
+        cursor.execute('SELECT username,su FROM users WHERE su LIKE "1" OR su LIKE "2" OR su LIKE "3"')
+        rows = cursor.fetchall()
+        results = []
+        count = 0
+        
+        for row in rows:
+          count += 1
+          role = " "
+          i = row[1]
+          if i == 1:
+            role = 'Moderator'
+          elif i == 2:
+            role = 'Administrator'
+          elif i == 3:
+            role = 'Super User'
+            
+          results.append(str(count)+ ": " + str(row[0]) + " ({})".format(role))
+          
+        room.message('Current Admins')    
+        room.message('... '.join(results)) 
+          
+          
+      except Error as e:
+        room.message(str(e))
+      finally:
+        cursor.close()
+        conn.close()
+   
     
     """
     Add admin Command 
     """
     def addadmin(tablename,column,_):
       _ , __ = _.split(" ", 1)
-      print(safe(_))
-      if(safe(_)):
+      if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) or _ == ""):
         room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
-      else:  
+      else:
         try:
-          print(safe(_))
+          
           dbconfig = read_db_config()
           conn = MySQLConnection(**dbconfig)
           cursor = conn.cursor()
@@ -272,14 +312,76 @@ class bot(ch.RoomManager):
               conn.commit()
               room.message('Set {} as a SuperUser.. are you sure you meant to do this?'.format(_))  
             
+            
+          
+          
         except Error as e:
           room.message(str(e))
         finally:
           cursor.close()
           conn.close()
-      
-  
-      
+    """
+    SQL Update Function
+    @tablename : The table 
+    @column : The column the is changing
+    @column2 : The username column
+    @var: The username
+    @_: The provided change 
+          
+    @return : returns confirmation of updated column in table      
+    """      
+    def update(tablename,column,column2,var,_):
+     
+      if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) or _ == ""):
+        room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
+      else:
+        try:
+          if column == "notification" or "nofollow":
+            dbconfig = read_db_config()
+            conn = MySQLConnection(**dbconfig)
+            cursor = conn.cursor()
+            if _ == "" or " ":
+              room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
+            elif column == "notification" and _ == 'on':
+              cursor.execute('UPDATE {} SET {} = 0 WHERE {} = "{}"'.format(tablename,column,column2,var))
+              conn.commit()
+              room.message("You turned notifications ON! (on by default if you didn't turn it off) You will now receive notifications when someone you are following has an update!  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ")
+            elif column == "notification" and _ == 'off':
+              cursor.execute('UPDATE {} SET {} = 1 WHERE {} = "{}"'.format(tablename,column,column2,var))
+              conn.commit()
+              room.message("You turned notifications OFF! You will not receive any notifications when someone you are following has an update.  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ")
+            elif column == "nofollow" and _ == 'on':
+              cursor.execute('UPDATE {} SET {} = 1 WHERE {} = "{}"'.format(tablename,column,column2,var))
+              conn.commit()
+              room.message("You changed your profile to PRIVATE! You are not allowing anyone to follow you at this point. Are you sure you didn't mean to block someone instead?  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ") 
+            elif column == "nofollow" and _ == 'off':
+              cursor.execute('UPDATE {} SET {} = 0 WHERE {} = "{}"'.format(tablename,column,column2,var))
+              conn.commit()
+              room.message("You changed your profile to PUBLIC! You are allowing anyone to follow you (unless you block someone with the block command)  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ")   
+              
+              
+            
+          else:  
+            dbconfig = read_db_config()
+            conn = MySQLConnection(**dbconfig)
+            cursor = conn.cursor()
+            cursor.execute('UPDATE {} SET {} = "{}" WHERE {} = "{}"'.format(tablename,column,_,column2,var))
+            conn.commit()    
+            room.message('Updated your {} to {} !'.format(column,_))  
+        except Error as e:
+          room.message(str(e))
+        finally:
+          cursor.close()
+          conn.close()    
+    
+    
+          
+          
+    """
+    Whoami Command
+    
+    @return:  Returns the user's name , if no nickname , the user's rl name , age, rl pic, role, and if top percent of followed users  
+    """  
         
     """
     The bot commands
@@ -298,7 +400,16 @@ class bot(ch.RoomManager):
     prfx and 'yt': lambda _: yt(_),
     prfx and '+wos': lambda _: insert('wallofshame','message',_),
     prfx and 'wos': lambda _: simpleSelect('wallofshame','message',_),
-    prfx and 'addadmin': lambda _: addadmin('users','username',_) 
+    prfx and 'addadmin': lambda _: addadmin('users','username',_),
+    prfx and 'mods' : lambda _: mods(_),
+    prfx and 'nickname': lambda _: update('users','nickname','username',user.name,_),
+    prfx and 'age': lambda _: update('users','age','username',user.name,_),
+    prfx and 'rlname': lambda _: update('users','rlname','username',user.name,_),
+    prfx and 'mood': lambda _: update('users','mood','username',user.name,_),
+    prfx and 'status': lambda _: update('users','status','username',user.name,_),
+    prfx and 'notifications': lambda _: update('users','notification','username',user.name,_),
+    prfx and 'private': lambda _: update('users','nofollow','username',user.name,_)
+    
     
     }[cmd](_)
 
