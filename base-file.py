@@ -20,6 +20,7 @@ import imp
 import webbrowser
 import csv
 import subprocess
+from subprocess import call
 import zipfile
 import os.path
 import sys
@@ -187,7 +188,7 @@ class bot(ch.RoomManager):
     
     def insert(tablename,column,_):
       if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) or _ == "" ):
-        room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
+        room.message(' *stop* You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
       else:
         try:
           dbconfig = read_db_config()
@@ -195,7 +196,7 @@ class bot(ch.RoomManager):
           cursor = conn.cursor()
           cursor.execute('INSERT INTO {}({}) VALUES("{}") '.format(tablename,column,_))
           conn.commit()
-          room.message("Added {} to {}.".format(_,tablename))      
+          room.message("Added {} to {} *pukes* ".format(_,tablename))      
             
         except Error as e:
           room.message(e)
@@ -209,7 +210,7 @@ class bot(ch.RoomManager):
     """
     def simpleSelect(tablename,column,_):
       if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) ):
-        room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
+        room.message(' *stop* You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
       else:
         try:
           dbconfig = read_db_config()
@@ -219,7 +220,7 @@ class bot(ch.RoomManager):
           rows = cursor.fetchall()
  
           if tablename == 'wallofshame':
-            room.message('Here are the last 25 messages added to the Wall of Shame. To view the Wall , go to http://chatangu.tk/wallofshame')
+            room.message(' :@ Here are the last 25 messages added to the Wall of Shame. To view the Wall , go to http://chatangu.tk/wallofshame')
             
             results = []
             for count, row in enumerate(rows, 1):
@@ -269,7 +270,7 @@ class bot(ch.RoomManager):
             
           results.append(str(count)+ ": " + str(row[0]) + " ({})".format(role))
           
-        room.message('Current Admins')    
+        room.message('Current Admins *bored* ')    
         room.message('... '.join(results)) 
           
           
@@ -286,7 +287,7 @@ class bot(ch.RoomManager):
     def addadmin(tablename,column,_):
       _ , __ = _.split(" ", 1)
       if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) or _ == ""):
-        room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
+        room.message(' *stop* You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
       else:
         try:
           
@@ -297,20 +298,20 @@ class bot(ch.RoomManager):
           rows = cursor.fetchone()
             
           if(rows == None):
-            room.message('That user doesn\'t exist')
+            room.message(' *stop* That user doesn\'t exist')
           else:
             if(__ == ('moderator')):
               cursor.execute('UPDATE {} SET su = 1 WHERE {} = "{}"'.format(tablename,column,_))
               conn.commit()
-              room.message('Set {} as Moderator!'.format(_))
+              room.message('Set {} as Moderator! :) '.format(_))
             elif(__ == ('admin')):
               cursor.execute('UPDATE {} SET su = 2 WHERE {} = "{}"'.format(tablename,column,_))
               conn.commit()
-              room.message('Set {} as Administrator!'.format(_))
+              room.message('Set {} as Administrator! 8) '.format(_))
             elif(__ == ('superuser')):
               cursor.execute('UPDATE {} SET su = 3 WHERE {} = "{}"'.format(tablename,column,_))
               conn.commit()
-              room.message('Set {} as a SuperUser.. are you sure you meant to do this?'.format(_))  
+              room.message('Set {} as a SuperUser.. are you sure you meant to do this? :o '.format(_))  
             
             
           
@@ -333,39 +334,37 @@ class bot(ch.RoomManager):
     def update(tablename,column,column2,var,_):
      
       if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) or _ == ""):
-        room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
+        room.message(' *stop* You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
       else:
         try:
-          if column == "notifications" or "nofollow":
-            dbconfig = read_db_config()
-            conn = MySQLConnection(**dbconfig)
-            cursor = conn.cursor()
-            if _ ==  " ":
-              room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
-            elif column == "notifications" and _ == 'on':
-              cursor.execute('UPDATE {} SET {} = 0 WHERE {} = "{}"'.format(tablename,column,column2,var))
-              conn.commit()
-              room.message("You turned notifications ON! (on by default if you didn't turn it off) You will now receive notifications when someone you are following has an update!  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ]")
-            elif column == "notifications" and _ == 'off':
-              cursor.execute('UPDATE {} SET {} = 1 WHERE {} = "{}"'.format(tablename,column,column2,var))
-              conn.commit()
-              room.message("You turned notifications OFF! You will not receive any notifications when someone you are following has an update.  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ]")
-            elif column == "nofollow" and _ == 'on':
-              cursor.execute('UPDATE {} SET {} = 1 WHERE {} = "{}"'.format(tablename,column,column2,var))
-              conn.commit()
-              room.message("You changed your profile to PRIVATE! You are not allowing anyone to follow you at this point. Are you sure you didn't mean to block someone instead?  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot] ") 
-            elif column == "nofollow" and _ == 'off':
-              cursor.execute('UPDATE {} SET {} = 0 WHERE {} = "{}"'.format(tablename,column,column2,var))
-              conn.commit()
-              room.message("You changed your profile to PUBLIC! You are allowing anyone to follow you (unless you block someone with the block command)  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ] ")   
+          dbconfig = read_db_config()
+          conn = MySQLConnection(**dbconfig)
+          cursor = conn.cursor()
+          
+          if _ ==  " ":
+            room.message(' *stop* You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
+          if column == "notifications" and _ == 'on':
+            cursor.execute('UPDATE {} SET {} = 0 WHERE {} = "{}"'.format(tablename,column,column2,var))
+            conn.commit()
+            room.message(" ;) You turned notifications ON! (on by default if you didn't turn it off) You will now receive notifications when someone you are following has an update!  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ]")
+          if column == "notifications" and _ == 'off':
+            cursor.execute('UPDATE {} SET {} = 1 WHERE {} = "{}"'.format(tablename,column,column2,var))
+            conn.commit()
+            room.message(" :| You turned notifications OFF! You will not receive any notifications when someone you are following has an update.  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ]")
+          if column == "nofollow" and _ == 'on':
+            cursor.execute('UPDATE {} SET {} = 1 WHERE {} = "{}"'.format(tablename,column,column2,var))
+            conn.commit()
+            room.message(" :| You changed your profile to PRIVATE! You are not allowing anyone to follow you at this point. Are you sure you didn't mean to block someone instead?  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot] ") 
+          if column == "nofollow" and _ == 'off':
+            cursor.execute('UPDATE {} SET {} = 0 WHERE {} = "{}"'.format(tablename,column,column2,var))
+            conn.commit()
+            room.message(" ;) You changed your profile to PUBLIC! You are allowing anyone to follow you (unless you block someone with the block command)  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ] ")   
               
           else:  
-            dbconfig = read_db_config()
-            conn = MySQLConnection(**dbconfig)
-            cursor = conn.cursor()
+            
             cursor.execute('UPDATE {} SET {} = "{}" WHERE {} = "{}"'.format(tablename,column,_,column2,var))
             conn.commit()    
-            room.message('Updated your {} to {} !'.format(column,_))  
+            room.message('Updated your {} to {} ! *star* '.format(column,_))  
         except Error as e:
           room.message(str(e))
         finally:
@@ -373,9 +372,74 @@ class bot(ch.RoomManager):
           conn.close()    
     
     """
-    Follow / block / unblock Command
+    Follow / Unfollow Command
     """
-    def social(tablename,tablename2,tablename3,column,column2,column3,column4,column5,column6,var,_):
+    def social(tablename,tablename2,tablename3,column,column2,column3,column4,column5,column6,var,_,n):
+      if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) or _ == ""):
+        room.message(' *stop* You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
+      else:
+        try:
+          dbconfig = read_db_config()
+          conn = MySQLConnection(**dbconfig)
+          cursor = conn.cursor()
+          
+          cursor.execute("""SELECT({}) FROM({}) 
+          WHERE {} LIKE '{}'""".format(column,tablename,column,_))
+          
+          rows = cursor.fetchone()
+          
+          if(rows == None):
+            room.message(' *stop* That user doesn\'t exist')
+            cursor.close()
+            conn.close()
+          if(rows != None):
+            i = rows[0]
+          
+          
+            
+          
+          if i.lower() == _ :
+            if n == 1:
+              cursor.execute('DELETE FROM {} WHERE {} LIKE "{}" and {} like "{}"'.format(tablename3,column5,_,column6,var))
+              conn.commit()
+              room.message('You unfollowed {}.. You will not receive anymore updates from this person  *hb* '.format(_))
+            else:  
+              
+              cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}"'.format(column2,tablename,column,_))
+              rows = cursor.fetchone()
+              test = rows[0]
+              if test == 0:
+                a = True
+              else:
+                room.message(' *stop* This user is PRIVATE so you can\'t follow them')
+                cursor.close()
+                conn.close()
+              cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}" and {} like "{}"'.format(column3,tablename2,column4,_,column3,var))
+              rows = cursor.fetchone()
+            
+              if rows == None:
+                b = True
+              else:
+                room.message('This user has blocked you.. maybe talk to them and get back to me? *hb* ')
+                cursor.close()
+                conn.close()
+            if(a and b == True):
+              try:
+                cursor.execute('INSERT INTO {}({},{}) VALUES("{}","{}") '.format(tablename3,column5,column6,_,var))
+                conn.commit()
+                room.message('You are now following {}! You will receive notifications whenever this user has an update! *star* '.format(_))
+              except Error as e:
+                room.message(' *stop* You have already followed this person!.')
+              finally:
+                cursor.close()
+                conn.close()
+        except Error as e:
+          room.message(str(e))
+        finally:
+          cursor.close()
+          conn.close()
+   
+    def manage(tablename,tablename2,tablename3,tablename4,column,column3,column4,column5,column6,var,_):
       if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) or _ == ""):
         room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
       else:
@@ -383,75 +447,92 @@ class bot(ch.RoomManager):
           dbconfig = read_db_config()
           conn = MySQLConnection(**dbconfig)
           cursor = conn.cursor()
-          cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}"'.format(column,tablename,column,_))
+          
+          cursor.execute("""SELECT({}) FROM({}) 
+          WHERE {} LIKE '{}'""".format(column,tablename,column,_))
+          
           rows = cursor.fetchone()
           
           if(rows == None):
-            room.message('That user doesn\'t exist')
-          
-          if(rows != None):
-            i = rows[0]
-          
-          
-          if tablename3 == 'block':
+            room.message(' *stop* That user doesn\'t exist')
             
-            cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}" and {} like "{}"'.format(column3,tablename2,column4,_,column3,var))
-            rows = cursor.fetchone()
-            if rows == None:
+          else:
+            i = rows[0]
+            if tablename3 == 'block':
+              cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}" and {} like "{}"'.format(column3,tablename2,column4,var,column3,_))
+              rows = cursor.fetchone()
+              if rows == None:
                 try:
                   cursor.execute('INSERT INTO {}({},{}) VALUES("{}","{}") '.format(tablename2,column3,column4,_,var))
                   conn.commit()
+                  cursor.execute('DELETE FROM {} WHERE {} LIKE "{}" and {} like "{}"'.format(tablename4,column5,var,column6,_))
+                  conn.commit()
+                  
+                  room.message('Blocked {} *hb* This person cannot follow you or access your information. '.format(_))
                   
                 except Error as e:
-                  room.message('You already blocked this user .. Did you mean unblock?..')
-                  
-          if tablename3 == 'unblock':
-            cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}" and {} like "{}"'.format(column3,tablename2,column4,_,column3,var))
-            rows = cursor.fetchone()
-            if rows == None:
-              room.message('You never blocked {}'.format(_))
-            else:    
-              cursor.execute('DELETE FROM({}) WHERE {} LIKE "{}" and {} like "{}"'.format(tablename2,column4,var,column3,_))
-              conn.commit()
-              room.message('You unblocked {}.. how sweet of you <3'.format(_))
-                
-           
-            
-          else:          
-          
-            if i.lower() == _ :
-              cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}"'.format(column2,tablename,column,_))
-              rows = cursor.fetchone()
-              test = rows[0]
-              if test == 0:
-                a = True
+                  print(e)
               else:
-                room.message('This user is PRIVATE so you can\'t follow them')
-          
-              cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}" and {} like "{}"'.format(column3,tablename2,column4,_,column3,var))
-              rows = cursor.fetchone()
+                room.message(' *stop* You already blocked {}..  Did you mean to unblock?'.format(_))
             
+            
+            if tablename3 == 'unblock':
+              cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}" and {} like "{}"'.format(column3,tablename2,column4,var,column3,_))
+              rows = cursor.fetchone()
+              
               if rows == None:
-                b = True
-              else:
-                room.message('This user has blocked you.. maybe talk to them and get back to me?')
-            if(a and b == True):
-              try:
-                cursor.execute('INSERT INTO {}({},{}) VALUES("{}","{}") '.format(tablename3,column5,column6,_,var))
+                room.message(' *stop* You never blocked {}'.format(_))
+              else:    
+                cursor.execute('DELETE FROM {} WHERE {} LIKE "{}" and {} like "{}"'.format(tablename2,column4,var,column3,_))
                 conn.commit()
-                room.message('You are now following {}! You will receive notifications whenever this user has an update!'.format(_))
-              except Error as e:
-                room.message('You have already followed this person!.')
-    
-        except Error as e:
-          room.message(str(e))
+                room.message('You unblocked {}.. how sweet of you *h* *blush*'.format(_))
+        
         finally:
           cursor.close()
           conn.close()   
-    
-    
+            
+                      
           
           
+          
+   
+    """
+    Restart Bot animation: Power Cycles Bot with delays
+    
+    
+    """
+    def restart():
+      #prompt
+      room.message('Saving states... powering off.. zzzz')
+      #cycle 1
+      a = lambda x: room.message('{}'.format(x))
+      b = 'Rebooting *star* '
+      c =threading.Timer(4,a,[b])
+      c.start()
+      #cycle2
+      d = lambda x: room.disconnect() 
+      e = threading.Timer(8,d,"_")
+      e.start()
+      #reboot
+      f = lambda x: os.execl(sys.executable, 'python', __file__, *sys.argv[1:])
+      g = threading.Timer(9,f,"_")
+      g.start()
+      
+    """
+    The helper commands
+    
+    @return: Returns information about bot and main helper commands
+          
+    """
+    def help():
+      room.message(' *star* To see General Commands (like say) ,use >general . For Social Commands (like status) , use >social. For Merchant Commands (like Currency) , use >merchant. Keep in mind many commands may change and some will be eliminated for pm or chat usage only. Updates will be regularly added to my Documentation , http://chatangu.tk/bot ')
+    def gcmds():
+      room.message(" *star* General Commands: help , general , merchant , say , random, rooms, math , pm , yt , gi, ud , gs , reddit , addAdmin , removeAdmin , admin+ , admin- , mods , ipInfo  , whois , whoami, reboot ..")
+    def scmds():
+      room.message("Social Commands: followers  ,follow  ,myfollowers  , showfollowers  , feed  , popularity  ,checkpopularity  ,mostHated  ,mostLoved  , topTrolls  ,status  ,mood  ,age  , schedule  , randompic  , listFavoriteThings  , showUserComment  , showRecentComments  ,showCurrency  ,currency  ,rlpic , nickname , whyhate , whylove , whystalk , whyfriend ,whyreject , Goodnight , goodnightAll , goodmorning , goodmorningAll , +friend ,-friend ,+lover ,-lover ,+hater ,-hater ,+stalker ,-stalker ,+crush ,-crush ,+ex ,-ex ,+reject ,-reject , +randompic ,+status ,+mood ,+favoritething ,-favoritething ,+userComment ,-userComment ,+comment ,-whyhate ,-whylove ,-whystalk ,-whyfriend ,voteHate ,votedLove ,voteTroll , unfollow , blockfollow , unblockfollow , nofollow...")
+    def mcmds():
+      room.message('NotImplemented')
+      
     """
     Whoami Command
     
@@ -484,9 +565,16 @@ class bot(ch.RoomManager):
     prfx and 'status': lambda _: update('users','status','username',user.name,_),
     prfx and 'notifications': lambda _: update('users','notifications','username',user.name,_),
     prfx and 'private': lambda _: update('users','nofollow','username',user.name,_),
-    prfx and 'follow': lambda _: social('users','block','followers','username','nofollow','blocked','blocker','followed','follower',user.name,_),
-    prfx and 'block': lambda _: social('users','block','block','username','','blocked','blocker','','',user.name,_),
-    prfx and 'unblock': lambda _: social('users','block','unblock','username','','blocked','blocker','','',user.name,_)
+    prfx and 'follow': lambda _: social('users','block','followers','username','nofollow','blocked','blocker','followed','follower',user.name,_,0),
+    prfx and 'unfollow': lambda _: social('users','block','followers','username','nofollow','blocked','blocker','followed','follower',user.name,_,1),
+    prfx and 'block': lambda _: manage('users','block','block','followers','username','blocked','blocker','followed','follower',user.name,_),
+    prfx and 'unblock': lambda _: manage('users','block','unblock','followers','username','blocked','blocker','followed','follower',user.name,_),
+    prfx and 'help': lambda _: help(),
+    prfx and 'general': lambda _: gcmds(),
+    prfx and 'social': lambda _: scmds(),
+    prfx and 'merchant': lambda _: mcmds(),
+    prfx and 'reboot':lambda _: restart()
+    
     
     
     }[cmd](_)
@@ -504,7 +592,7 @@ class bot(ch.RoomManager):
         
              
   def onConnect(self,room):
-    room.message("SYSTEMS ONLINE: Migrate your flavors im hungry :(")
+    room.message("Welcome to Companion! *waves* Type >help for more information. You should definitely read my documentation at http://chatangu.tk/bot , ")
     print("ONLINE")
    
   def onJoin(self, room, user):
