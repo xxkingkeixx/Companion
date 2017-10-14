@@ -96,9 +96,9 @@ class bot(ch.RoomManager):
   
   def onInit(self):
     self.setNameColor("FFFFFF")
-    self.setFontColor("FF0000")
-    self.setFontFace("arial")
-    self.setFontSize(9)
+    self.setFontColor("666666")
+    self.setFontFace("Arial")
+    self.setFontSize(10)
     
   """
   @param self: Bot 
@@ -175,7 +175,24 @@ class bot(ch.RoomManager):
       soup = BeautifulSoup(html, "html5lib")
       for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'} ,limit=1):
         room.message( 'https://www.youtube.com' + vid['href'])
-   
+    """
+    NOTIFICATION FUNCTION
+    
+    
+    """
+    
+    def notify(message,var):
+      dbconfig = read_db_config()
+      conn = MySQLConnection(**dbconfig)
+      cursor = conn.cursor()
+      cursor.execute('select username from users where notifications=0 and username IN (select follower from followers where followed like "{}")'.format(var))
+      results = cursor.fetchall()
+      for result in results:
+        self.pm.message(ch.User(str(result[0])), message)
+        
+        
+        
+      
     
     """ 
     SQL INSERT FUNCTION
@@ -197,6 +214,8 @@ class bot(ch.RoomManager):
           cursor.execute('INSERT INTO {}({}) VALUES("{}") '.format(tablename,column,_))
           conn.commit()
           room.message("Added {} to {} *pukes* ".format(_,tablename))      
+          notify("{} just added...  {}  ..to the Wall of Shame! ;) ".format(user.name,_),user.name)
+          
             
         except Error as e:
           room.message(e)
@@ -224,7 +243,7 @@ class bot(ch.RoomManager):
             
             results = []
             for count, row in enumerate(rows, 1):
-              
+               
               results.append(str(count)+ ": " + row[0])
               
             room.message('... '.join(results)) 
@@ -331,7 +350,7 @@ class bot(ch.RoomManager):
           
     @return : returns confirmation of updated column in table      
     """      
-    def update(tablename,column,column2,var,_):
+    def update(tablename,column,column2,var,_,message,alert):
      
       if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table")) or _ == ""):
         room.message(' *stop* You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
@@ -364,7 +383,11 @@ class bot(ch.RoomManager):
             
             cursor.execute('UPDATE {} SET {} = "{}" WHERE {} = "{}"'.format(tablename,column,_,column2,var))
             conn.commit()    
-            room.message('Updated your {} to {} ! *star* '.format(column,_))  
+            room.message('Updated your {} to {} ! *star* '.format(column,_))
+            if alert == 0:
+              notify("{} just updated his/her {} ! ".format(var,message),var)
+            else:
+              pass
         except Error as e:
           room.message(str(e))
         finally:
@@ -558,13 +581,13 @@ class bot(ch.RoomManager):
     prfx and 'wos': lambda _: simpleSelect('wallofshame','message',_),
     prfx and 'addadmin': lambda _: addadmin('users','username',_),
     prfx and 'mods' : lambda _: mods(_),
-    prfx and 'nickname': lambda _: update('users','nickname','username',user.name,_),
-    prfx and 'age': lambda _: update('users','age','username',user.name,_),
-    prfx and 'rlname': lambda _: update('users','rlname','username',user.name,_),
-    prfx and 'mood': lambda _: update('users','mood','username',user.name,_),
-    prfx and 'status': lambda _: update('users','status','username',user.name,_),
-    prfx and 'notifications': lambda _: update('users','notifications','username',user.name,_),
-    prfx and 'private': lambda _: update('users','nofollow','username',user.name,_),
+    prfx and 'nickname': lambda _: update('users','nickname','username',user.name,_,'nickname',0) ,
+    prfx and 'age': lambda _: update('users','age','username',user.name,_,'age',0),
+    prfx and 'rlname': lambda _: update('users','rlname','username',user.name,_,'rlname',0),
+    prfx and 'mood': lambda _: update('users','mood','username',user.name,_,'mood',0),
+    prfx and 'status': lambda _: update('users','status','username',user.name,_,'status',0),
+    prfx and 'notifications': lambda _: update('users','notifications','username',user.name,_,None,1),
+    prfx and 'private': lambda _: update('users','nofollow','username',user.name,_,None,1),
     prfx and 'follow': lambda _: social('users','block','followers','username','nofollow','blocked','blocker','followed','follower',user.name,_,0),
     prfx and 'unfollow': lambda _: social('users','block','followers','username','nofollow','blocked','blocker','followed','follower',user.name,_,1),
     prfx and 'block': lambda _: manage('users','block','block','followers','username','blocked','blocker','followed','follower',user.name,_),
@@ -606,9 +629,9 @@ class bot(ch.RoomManager):
     
   def onPMMessage(self, pm, user, body):
         self.setNameColor("FFFFFF")
-        self.setFontColor("FF0000")
-        self.setFontFace("arial")
-        self.setFontSize(9)
+        self.setFontColor("666666")
+        self.setFontFace("Typewriter")
+        self.setFontSize(10)
         
         
         
