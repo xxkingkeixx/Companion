@@ -14,6 +14,7 @@ import cgi
 import codecs
 import datetime
 import binascii
+import HTMLParser
 import glob
 import json
 import imp
@@ -41,6 +42,11 @@ from configparser import ConfigParser
 import urllib2 as urlreq
 from mysql.connector import MySQLConnection, Error
 
+################################################################################
+
+#DATABASE CONNECTION BOIIIII
+
+################################################################################
 
 def read_db_config(filename='config.ini', section='mysql'):
     """ Read database configuration file and return a dictionary object
@@ -88,7 +94,11 @@ def connect():
 if __name__ == '__main__':
     connect()
 
-#end
+################################################################################
+
+#START CHATROOM SECTION  BOIIIIIIIIIIIIIIIIIII
+
+################################################################################
 
 class bot(ch.RoomManager):
   
@@ -115,8 +125,15 @@ class bot(ch.RoomManager):
     except:
       cmd, args = message.body, ""      
     print("[{}] {}: {}: {}".format(room.name, user.name.title(), message.body, message.ip))
-    """
+    
     try:
+      dbconfig = read_db_config()
+      conn = MySQLConnection(**dbconfig)
+      cursor = conn.cursor()
+      cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}"'.format('username','users','username',user.name))
+      rows = cursor.fetchone()
+            
+      if(rows == None):
         a = "users" 
         b = "username" 
         c = "ip" 
@@ -127,13 +144,16 @@ class bot(ch.RoomManager):
         cursor = conn.cursor()
         cursor.execute('INSERT INTO {}({},{}) VALUES("{}","{}") '.format(a,c,b,e,d))
         conn.commit()
-          
+            
+      else:
+        pass
+    
     except Error as e:
-      room.message(e)
+      room.message(str(e))
     finally:
       cursor.close()
       conn.close()
-    """
+    
     
     """
     @param prfx: The Command init
@@ -175,6 +195,7 @@ class bot(ch.RoomManager):
       soup = BeautifulSoup(html, "html5lib")
       for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'} ,limit=1):
         room.message( 'https://www.youtube.com' + vid['href'])
+    
     """
     NOTIFICATION FUNCTION
     
@@ -189,10 +210,6 @@ class bot(ch.RoomManager):
       results = cursor.fetchall()
       for result in results:
         self.pm.message(ch.User(str(result[0])), message)
-        
-        
-        
-      
     
     """ 
     SQL INSERT FUNCTION
@@ -331,10 +348,6 @@ class bot(ch.RoomManager):
               cursor.execute('UPDATE {} SET su = 3 WHERE {} = "{}"'.format(tablename,column,_))
               conn.commit()
               room.message('Set {} as a SuperUser.. are you sure you meant to do this? :o '.format(_))  
-            
-            
-          
-          
         except Error as e:
           room.message(str(e))
         finally:
@@ -366,15 +379,16 @@ class bot(ch.RoomManager):
             cursor.execute('UPDATE {} SET {} = 0 WHERE {} = "{}"'.format(tablename,column,column2,var))
             conn.commit()
             room.message(" ;) You turned notifications ON! (on by default if you didn't turn it off) You will now receive notifications when someone you are following has an update!  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ]")
-          if column == "notifications" and _ == 'off':
+          elif column == "notifications" and _ == 'off':
             cursor.execute('UPDATE {} SET {} = 1 WHERE {} = "{}"'.format(tablename,column,column2,var))
             conn.commit()
             room.message(" :| You turned notifications OFF! You will not receive any notifications when someone you are following has an update.  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ]")
-          if column == "nofollow" and _ == 'on':
+          elif column == "nofollow" and _ == 'on':
             cursor.execute('UPDATE {} SET {} = 1 WHERE {} = "{}"'.format(tablename,column,column2,var))
             conn.commit()
+            room.message('You tried: UPDATE {} SET {} = 1 WHERE {} = "{}"'.format(tablename,column,column2,var) )
             room.message(" :| You changed your profile to PRIVATE! You are not allowing anyone to follow you at this point. Are you sure you didn't mean to block someone instead?  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot] ") 
-          if column == "nofollow" and _ == 'off':
+          elif column == "nofollow" and _ == 'off':
             cursor.execute('UPDATE {} SET {} = 0 WHERE {} = "{}"'.format(tablename,column,column2,var))
             conn.commit()
             room.message(" ;) You changed your profile to PUBLIC! You are allowing anyone to follow you (unless you block someone with the block command)  [ Confused? For more information, please visit my developer site here : http://chatangu.tk/bot ] ")   
@@ -513,11 +527,6 @@ class bot(ch.RoomManager):
         finally:
           cursor.close()
           conn.close()   
-            
-                      
-          
-          
-          
    
     """
     Restart Bot animation: Power Cycles Bot with delays
@@ -555,7 +564,7 @@ class bot(ch.RoomManager):
       room.message("Social Commands: followers  ,follow  ,myfollowers  , showfollowers  , feed  , popularity  ,checkpopularity  ,mostHated  ,mostLoved  , topTrolls  ,status  ,mood  ,age  , schedule  , randompic  , listFavoriteThings  , showUserComment  , showRecentComments  ,showCurrency  ,currency  ,rlpic , nickname , whyhate , whylove , whystalk , whyfriend ,whyreject , Goodnight , goodnightAll , goodmorning , goodmorningAll , +friend ,-friend ,+lover ,-lover ,+hater ,-hater ,+stalker ,-stalker ,+crush ,-crush ,+ex ,-ex ,+reject ,-reject , +randompic ,+status ,+mood ,+favoritething ,-favoritething ,+userComment ,-userComment ,+comment ,-whyhate ,-whylove ,-whystalk ,-whyfriend ,voteHate ,votedLove ,voteTroll , unfollow , blockfollow , unblockfollow , nofollow...")
     def mcmds():
       room.message('NotImplemented')
-      
+    
     """
     Whoami Command
     
@@ -569,129 +578,200 @@ class bot(ch.RoomManager):
     @return: Returns output if command in dictionary
     
     """
-
-    result = {
-    prfx and 'say': lambda _:  _,
-    prfx and 'test': lambda _: 'Working!',
-    prfx and 'pm': lambda _: pmcmd(_),
-    prfx and 'random': lambda _: str(random.randrange(int(_))),
-    prfx and 'rooms': lambda _:  "I'm in "+ str(len(rooms)) +" rooms , " + ", ".join(rooms),
-    prfx and 'yt': lambda _: yt(_),
-    prfx and '+wos': lambda _: insert('wallofshame','message',_),
-    prfx and 'wos': lambda _: simpleSelect('wallofshame','message',_),
-    prfx and 'addadmin': lambda _: addadmin('users','username',_),
-    prfx and 'mods' : lambda _: mods(_),
-    prfx and 'nickname': lambda _: update('users','nickname','username',user.name,_,'nickname',0) ,
-    prfx and 'age': lambda _: update('users','age','username',user.name,_,'age',0),
-    prfx and 'rlname': lambda _: update('users','rlname','username',user.name,_,'rlname',0),
-    prfx and 'mood': lambda _: update('users','mood','username',user.name,_,'mood',0),
-    prfx and 'status': lambda _: update('users','status','username',user.name,_,'status',0),
-    prfx and 'notifications': lambda _: update('users','notifications','username',user.name,_,None,1),
-    prfx and 'private': lambda _: update('users','nofollow','username',user.name,_,None,1),
-    prfx and 'follow': lambda _: social('users','block','followers','username','nofollow','blocked','blocker','followed','follower',user.name,_,0),
-    prfx and 'unfollow': lambda _: social('users','block','followers','username','nofollow','blocked','blocker','followed','follower',user.name,_,1),
-    prfx and 'block': lambda _: manage('users','block','block','followers','username','blocked','blocker','followed','follower',user.name,_),
-    prfx and 'unblock': lambda _: manage('users','block','unblock','followers','username','blocked','blocker','followed','follower',user.name,_),
-    prfx and 'help': lambda _: help(),
-    prfx and 'general': lambda _: gcmds(),
-    prfx and 'social': lambda _: scmds(),
-    prfx and 'merchant': lambda _: mcmds(),
-    prfx and 'reboot':lambda _: restart()
-    
-    
-    
-    }[cmd](_)
-
-    room.message(result)
-     
-    
-    
-   
-    
-     
-        
-   
-   
-        
-             
+    try:
+      result = {
+      prfx and 'say': lambda _:  _,
+      prfx and 'test': lambda _: 'Working!',
+      prfx and 'pm': lambda _: pmcmd(_),
+      prfx and 'random': lambda _: str(random.randrange(int(_))),
+      prfx and 'rooms': lambda _:  "I'm in "+ str(len(rooms)) +" rooms , " + ", ".join(rooms),
+      prfx and 'yt': lambda _: yt(_),
+      prfx and '+wos': lambda _: insert('wallofshame','message',_),
+      prfx and 'wos': lambda _: simpleSelect('wallofshame','message',_),
+      prfx and 'addadmin': lambda _: addadmin('users','username',_),
+      prfx and 'mods' : lambda _: mods(_),
+      prfx and 'nickname': lambda _: update('users','nickname','username',user.name,_,'nickname',0) ,
+      prfx and 'age': lambda _: update('users','age','username',user.name,_,'age',0),
+      prfx and 'rlname': lambda _: update('users','rlname','username',user.name,_,'rlname',0),
+      prfx and 'mood': lambda _: update('users','mood','username',user.name,_,'mood',0),
+      prfx and 'status': lambda _: update('users','status','username',user.name,_,'status',0),
+      prfx and 'notifications': lambda _: update('users','notifications','username',user.name,_,None,1),
+      prfx and 'private': lambda _: update('users','nofollow','username',user.name,_,None,1),
+      prfx and 'follow': lambda _: social('users','block','followers','username','nofollow','blocked','blocker','followed','follower',user.name,_,0),
+      prfx and 'unfollow': lambda _: social('users','block','followers','username','nofollow','blocked','blocker','followed','follower',user.name,_,1),
+      prfx and 'block': lambda _: manage('users','block','block','followers','username','blocked','blocker','followed','follower',user.name,_),
+      prfx and 'unblock': lambda _: manage('users','block','unblock','followers','username','blocked','blocker','followed','follower',user.name,_),
+      prfx and 'help': lambda _: help(),
+      prfx and 'general': lambda _: gcmds(),
+      prfx and 'social': lambda _: scmds(),
+      prfx and 'merchant': lambda _: mcmds(),
+      prfx and 'reboot':lambda _: restart()
+      
+      
+      
+      }[cmd](_)
+  
+      room.message(result)
+    except:
+      pass
+  
   def onConnect(self,room):
     room.message("Welcome to Companion! *waves* Type >help for more information. You should definitely read my documentation at http://chatangu.tk/bot , ")
     print("ONLINE")
+    
    
   def onJoin(self, room, user):
     room.message("Welcome "+ user.name.capitalize())
-
-
-
-
   
-   
-    
+  
+  ##############################################################################
+  
+  #PM SECTION BOIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+  
+  ##############################################################################
+  
   def onPMMessage(self, pm, user, body):
-        self.setNameColor("FFFFFF")
-        self.setFontColor("666666")
-        self.setFontFace("Typewriter")
-        self.setFontSize(10)
-        
-        
-        
-         
-          
-       
-             
-        if "tube.com" in body:
-          removespaces = body.replace(" ","")
-          pm.message(user, "Message Relayed to Master and Parent Chats :)")
-            
-          pmlogger = open('LOGGER.html', 'a')
-            
-          adminlogger = open('ADMINLOG.txt', 'a')
-            
-          time = str(datetime.datetime.strftime(datetime.datetime.now(), '%m-%d-%y'))
-            
-          pmFormatting = user.name.capitalize()+":  " + removespaces + "  ["+time+"]"
-            
-          self.pm.message(ch.User("eaaj"), pmFormatting)
-          for room in self.rooms:
-              room.message("Received PM from "+ pmFormatting)
-            
-          adminlogger.write(pmFormatting+"\n")
-            
-          adminlogger.close()
-            
-          pmlogger.close()
-        
-          print("[PM]"+user.name.capitalize()+": "+body) 
-           
-        
-        
-              
-          
-        else:
-          pm.message(user, "Message Relayed to Master and Parent Chats :)")
-          
-          pmlogger = open('LOGGER.html', 'a')
-          
-          adminlogger = open('ADMINLOG.txt', 'a')
-          
-          time = str(datetime.datetime.strftime(datetime.datetime.now(), '%m-%d-%y'))
-          
-          pmFormatting = user.name.capitalize()+":  " + body + "  ["+time+"]"
-          
-          self.pm.message(ch.User("eaaj"), pmFormatting)
-          for room in self.rooms:
-                  room.message("Received PM from "+ pmFormatting)
-          
-          adminlogger.write(pmFormatting+"\n")
-          
-          adminlogger.close()
-          
-          pmlogger.close()
-        
-        print("[PM]"+user.name.capitalize()+": "+body) 
+    self.setNameColor("FFFFFF")
+    self.setFontColor("666666")
+    self.setFontFace("Typewriter")
+    self.setFontSize(10)
     
-  
-
+    try:
+      cmd, args = body.split(" ", 1)
+    except:
+      cmd, args = body, ""      
+    
+    """
+    HTML PARSE
+    
+    Check for Unicode conversion for failsafe
+    """
+    h= HTMLParser.HTMLParser()
+    
+    prfx = h.unescape(cmd[:4]) == '>'
+    cmd = cmd[4:] if prfx else cmd
+    _ = args  
+    
+    """
+    Registration
+    
+    @return: Confirmation of registration
+    
+    """
+    def register():
+      try:
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}"'.format('username','users','username',user.name))
+        rows = cursor.fetchone()
+            
+        if(rows == None):
+          a = "users" 
+          b = "username" 
+          d = user.name 
+        
+          dbconfig = read_db_config()
+          conn = MySQLConnection(**dbconfig)
+          cursor = conn.cursor()
+          cursor.execute('INSERT INTO {}({}) VALUES("{}") '.format(a,b,d))
+          conn.commit()
+          self.pm.message(ch.User(user.name), 'You have just registered with companion. You will now be able to use social/merchant commands. *waves* Type >help for more information. You should definitely read my documentation at http://chatangu.tk/bot ')
+            
+        else:
+          self.pm.message(ch.User(user.name), 'You are already registered with me!')
+          
+    
+      except Error as e:
+        print e
+      finally:
+        cursor.close()
+        conn.close()
+    
+    """
+    Check Registration
+    
+    @return: TRUE or error. 
+    
+    """
+    
+    def chkreg():
+      try:
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        cursor.execute('SELECT {} FROM({}) WHERE {} LIKE "{}"'.format('username','users','username',user.name))
+        rows = cursor.fetchone()
+            
+        if(rows == None):
+          return False
+            
+        else:
+          return True
+          
+    
+      except Error as e:
+        print e
+      finally:
+        cursor.close()
+        conn.close()
+    
+    def test():
+     if chkreg():
+        self.pm.message(ch.User(user.name), 'Works *waves*')
+     else:
+        self.pm.message(ch.User(user.name), 'You need to register.')
+       
+    
+    
+    """
+    The PM commands
+    @param result: runs function based on command
+    @func lambda: Runs arguments if any in command
+    @return: Returns output if command in dictionary else skips
+    
+    """
+    
+    
+    try:
+           
+      result = {
+      prfx and 'say': lambda _:  _,
+      prfx and 'test': lambda _:  test(),
+      prfx and 'register': lambda _:  register(),
+      prfx and 'pm': lambda _: pmcmd(_),
+      prfx and 'random': lambda _: str(random.randrange(int(_))),
+      prfx and 'rooms': lambda _:  "I'm in "+ str(len(rooms)) +" rooms , " + ", ".join(rooms),
+      prfx and 'yt': lambda _: yt(_),
+      prfx and '+wos': lambda _: insert('wallofshame','message',_),
+      prfx and 'wos': lambda _: simpleSelect('wallofshame','message',_),
+      prfx and 'addadmin': lambda _: addadmin('users','username',_),
+      prfx and 'mods' : lambda _: mods(_),
+      prfx and 'nickname': lambda _: update('users','nickname','username',user.name,_,'nickname',0) ,
+      prfx and 'age': lambda _: update('users','age','username',user.name,_,'age',0),
+      prfx and 'rlname': lambda _: update('users','rlname','username',user.name,_,'rlname',0),
+      prfx and 'mood': lambda _: update('users','mood','username',user.name,_,'mood',0),
+      prfx and 'status': lambda _: update('users','status','username',user.name,_,'status',0),
+      prfx and 'notifications': lambda _: update('users','notifications','username',user.name,_,None,1),
+      prfx and 'private': lambda _: update('users','nofollow','username',user.name,_,None,1),
+      prfx and 'follow': lambda _: social('users','block','followers','username','nofollow','blocked','blocker','followed','follower',user.name,_,0),
+      prfx and 'unfollow': lambda _: social('users','block','followers','username','nofollow','blocked','blocker','followed','follower',user.name,_,1),
+      prfx and 'block': lambda _: manage('users','block','block','followers','username','blocked','blocker','followed','follower',user.name,_),
+      prfx and 'unblock': lambda _: manage('users','block','unblock','followers','username','blocked','blocker','followed','follower',user.name,_),
+      prfx and 'help': lambda _: help(),
+      prfx and 'general': lambda _: gcmds(),
+      prfx and 'social': lambda _: scmds(),
+      prfx and 'merchant': lambda _: mcmds(),
+      prfx and 'reboot':lambda _: restart()
+        
+      }[cmd](_)
+    
+      self.pm.message(ch.User(user.name), result)
+        
+    except:
+      pass
+    
+ 
 ###############################################################################
 
 
