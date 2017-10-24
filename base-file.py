@@ -94,6 +94,8 @@ def connect():
 if __name__ == '__main__':
     connect()
 
+
+
 ################################################################################
 
 #START CHATROOM SECTION  BOIIIIIIIIIIIIIIIIIII
@@ -110,6 +112,16 @@ class bot(ch.RoomManager):
     self.setFontFace("Arial")
     self.setFontSize(10)
     
+    
+    try:
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        cursor.execute('set global max_connections = 100')
+    except Error as e:
+      print e
+      
+        
   """
   @param self: Bot 
   @param room: The Chatroom
@@ -238,6 +250,8 @@ class bot(ch.RoomManager):
       results = cursor.fetchall()
       for result in results:
         self.pm.message(ch.User(str(result[0])), message)
+    def pm(user,message):
+      self.pm.message(ch.User(str(user)), message)
     
     """ 
     SQL INSERT FUNCTION
@@ -472,10 +486,7 @@ class bot(ch.RoomManager):
             conn.close()
           if(rows != None):
             i = rows[0]
-          
-          
-            
-          
+         
           if i.lower() == _ :
             if n == 1:
               cursor.execute('DELETE FROM {} WHERE {} LIKE "{}" and {} like "{}"'.format(tablename3,column5,_,column6,var))
@@ -506,6 +517,8 @@ class bot(ch.RoomManager):
                 cursor.execute('INSERT INTO {}({},{}) VALUES("{}","{}") '.format(tablename3,column5,column6,_,var))
                 conn.commit()
                 room.message('You are now following {}! You will receive notifications whenever this user has an update! *star* '.format(_))
+                notify("{} is now following {}.".format(var,_),var)
+                pm(_,'{} just followed you!'.format(var))
               except Error as e:
                 room.message(' *stop* You have already followed this person!.')
               finally:
@@ -576,8 +589,8 @@ class bot(ch.RoomManager):
     
     Return: The user's followers or a selected user
     """
-    def followers(_,var):
-      if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table"," "))):
+    def followers(_,var,x):
+      if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table"))):
         room.message('You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
       if ((user.name).startswith(('#','!'))):
         room.message('No anons allowed ;)')
@@ -587,16 +600,35 @@ class bot(ch.RoomManager):
           conn = MySQLConnection(**dbconfig)
           cursor = conn.cursor()
           
-          if (_ == ""):
-            cursor.execute('select follower from followers where followed like "{}"'.format(var))
+          if (_ == "" and x == 0):
+            cursor.execute('select follower from followers where followed = "{}"'.format(var))
             rows = cursor.fetchall()
             results = []
             room.message('You have {} followers'.format(cursor.rowcount))
             for count, row in enumerate(rows, 1):
                      
+              results.append('{}. {} '.format(count,row[0]))
+            if(cursor.rowcount == 0):
+              pass
+            else:
+              room.message('... '.join(results))
+         
+          elif (_ == "" and x == 1):
+            cursor.execute('select followed from followers where follower like "{}"'.format(var))
+            rows = cursor.fetchall()
+            results = []
+            room.message('You are following {} user(s)'.format(cursor.rowcount))
+            for count, row in enumerate(rows, 1):
+                     
               results.append(str(count)+ ": " + row[0])
                   
-              room.message('... '.join(results))
+            if(cursor.rowcount == 0):
+              pass
+            else:
+              room.message('... '.join(results))   
+         
+          
+          
           else:
             cursor.execute("SELECT({}) FROM({}) WHERE {} LIKE '{}'".format('username','users','username',_))
           
@@ -606,16 +638,35 @@ class bot(ch.RoomManager):
               room.message(' *stop* That user doesn\'t exist')
             
             else:
-              cursor.execute('select follower from followers where followed = "{}"'.format(_))
-              rows = cursor.fetchall()
-              results = []
-              room.message('{} has {} followers'.format(_,cursor.rowcount))
-              for count, row in enumerate(rows, 1):
-                     
-                results.append(str(count)+ ": " + row[0])
-                  
-                room.message('... '.join(results))
-      
+             
+              if(_ != "" and x == 0):
+                cursor.execute('select follower from followers where followed = "{}"'.format(_))
+                rows = cursor.fetchall()
+                results = []
+                room.message('{} has {} followers'.format(_,cursor.rowcount))
+                for count, row in enumerate(rows, 1):
+                       
+                  results.append(str(count)+ ": " + row[0])
+                      
+                if(cursor.rowcount == 0):
+                  pass
+                else:
+                  room.message('... '.join(results))
+              elif (_ != "" and x == 1):
+                cursor.execute('select followed from followers where follower like "{}"'.format(_))
+                rows = cursor.fetchall()
+                room.message('{} is following {} user(s)'.format(_,cursor.rowcount))
+                results = []
+                
+                for count, row in enumerate(rows, 1):
+                       
+                  results.append(str(count)+ ": " + row[0])
+                        
+                if(cursor.rowcount == 0):
+                  pass
+                else:
+                  room.message('... '.join(results))      
+        
         except Error as e:
           print e
         finally:
@@ -745,16 +796,41 @@ class bot(ch.RoomManager):
             n = cursor.rowcount
                 
             room.message('{} [{}]: I found: {}  *h* !, Real name is {} , age {} with {} follower(s). {} has {} alternate account(s) recorded.({})'.format(rlpic,role,username,rlname,age,n,username,aliases,output))              
-            
-          
-          
-      
-     
+           
       except Error as e:
         print e
       finally:
         cursor.close()
         conn.close()
+    
+    """
+    Popularity
+       
+    @return : Users with most followers    
+    """    
+    def popular():
+      try:
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        cursor.execute("SELECT followed, count(*) FROM followers GROUP BY followed ORDER BY count(*) DESC LIMIT 25")
+        rows = cursor.fetchall()
+        storage = []
+        
+        for count, x in enumerate(rows, 1):
+          user = x[0]
+          followers = x[1]
+          storage.append(' #{} {} ({})  '.format(count,user,followers))
+        
+          
+        room.message("Here are the top 25 most popular users! (based on followers) *h* : {}".format(",".join(storage)))  
+      except Error as e:
+        print e
+      finally:
+        conn.close()
+        cursor.close()
+         
+    
         
     """
     The bot commands
@@ -792,13 +868,11 @@ class bot(ch.RoomManager):
       prfx and 'social': lambda _: scmds(),
       prfx and 'merchant': lambda _: mcmds(),
       prfx and 'reboot':lambda _: restart(),
-      prfx and 'followers':lambda _: followers(_,user.name),
+      prfx and 'followers':lambda _: followers(_,user.name,0),
+      prfx and 'following':lambda _: followers(_,user.name,1),
       prfx and 'whoami':lambda _: who(user.name,0),
-      prfx and 'whois':lambda _: who(_,1)
-      
-      
-      
-      
+      prfx and 'whois':lambda _: who(_,1),
+      prfx and 'popular':lambda _: popular()
       
       }[cmd](_)
   
