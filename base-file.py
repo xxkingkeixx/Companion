@@ -108,19 +108,14 @@ class bot(ch.RoomManager):
   
   def onInit(self):
     self.setNameColor("FFFFFF")
-    self.setFontColor("666666")
-    self.setFontFace("Arial")
+    self.setFontColor("CC0033")
+    self.setFontFace("0")
     self.setFontSize(10)
+    self.enableBg()  
+    self.enableRecording()
     
     
-    try:
-        dbconfig = read_db_config()
-        conn = MySQLConnection(**dbconfig)
-        cursor = conn.cursor()
-        cursor.execute('set global max_connections = 100')
-    except Error as e:
-      print e
-      
+
         
   """
   @param self: Bot 
@@ -140,7 +135,7 @@ class bot(ch.RoomManager):
     
     if ((user.name).startswith(('#','!'))):
       pass
-    
+     
     else:
       try:
         dbconfig = read_db_config()
@@ -160,6 +155,7 @@ class bot(ch.RoomManager):
           cursor = conn.cursor()
           cursor.execute('INSERT INTO {}({},{}) VALUES("{}","{}") '.format(a,c,b,e,d))
           conn.commit()
+          cursor.close()
           conn.close()    
         
         else:
@@ -167,7 +163,8 @@ class bot(ch.RoomManager):
           rows = cursor.fetchall()
           row = rows[0]
           
-          if(row != str(message.ip)):
+          if((row != str(message.ip)) and len(message.ip) > 1):
+            
             a = "users" 
             b = "username" 
             c = "ip" 
@@ -178,8 +175,11 @@ class bot(ch.RoomManager):
             cursor = conn.cursor()
             cursor.execute('UPDATE {} SET {} = "{}" WHERE {} = "{}" '.format(a,c,e,b,d))
             conn.commit()
-          
-          else:  
+            cursor.close()
+            conn.close()
+          else:
+            cursor.close()
+            conn.close()
             pass
       
       except Error as e:
@@ -250,6 +250,8 @@ class bot(ch.RoomManager):
       results = cursor.fetchall()
       for result in results:
         self.pm.message(ch.User(str(result[0])), message)
+      conn.close()  
+    
     def pm(user,message):
       self.pm.message(ch.User(str(user)), message)
     
@@ -756,47 +758,63 @@ class bot(ch.RoomManager):
           
           if y == 0:  
             try:
-              
-              cursor.execute('select username from users where ip = "{}"'.format(message.ip))
-              result = cursor.fetchall()  
-              aliases = cursor.rowcount
-              lst = []
+              if len(ip) > 1:
+                cursor.execute('select username from users where ip = "{}"'.format(ip))
+                result = cursor.fetchall()  
+                aliases = cursor.rowcount
+                lst = []
+                  
+                for count, uname in enumerate(result, 1):
+                  lst.append(" {}: {} ".format(count,uname[0]))
+                output = "...".join(lst)
                 
-              for count, uname in enumerate(result, 1):
-                lst.append(" {}: {} ".format(count,uname[0]))
-              output = "...".join(lst)
-              
-              cursor.execute('select follower from followers where followed = "{}"'.format(x))
-              r = cursor.fetchall()
-              n = cursor.rowcount
-              print('you tried: select follower from followers where followed = "{}"'.format(x))
-              for x in r:
-                print x[0]
-              print n
-              
+                cursor.execute('select follower from followers where followed = "{}"'.format(x))
+                r = cursor.fetchall()
+                n = cursor.rowcount
+                print('you tried: select follower from followers where followed = "{}"'.format(x))
+                for x in r:
+                  print x[0]
+                print n
                 
-              room.message('{} [{}]: Hey {} *h* , your name is {} , age {} with {} follower(s). You have {} alternate account(s) recorded.({})'.format(rlpic,role,username,rlname,age,n,aliases,output))  
-            
+                  
+                room.message('{} [{}]: Hey {} *h* , your name is {} , age {} with {} follower(s). You have {} alternate account(s) recorded.({})'.format(rlpic,role,username,rlname,age,n,aliases,output))  
+              if len(ip) < 1:
+                cursor.execute('select follower from followers where followed = "{}"'.format(x))
+                r = cursor.fetchall()
+                n = cursor.rowcount
+                print('you tried: select follower from followers where followed = "{}"'.format(x))
+                for x in r:
+                  print x[0]
+                print n
+                
+                  
+                room.message('{} [{}]: Hey {} *h* , your name is {} , age {} with {} follower(s). You have {} alternate account(s) recorded.'.format(rlpic,role,username,rlname,age,n,0)) 
+              
             except Error as e:
               print e
               
           else:
-            
-            cursor.execute('select username from users where ip = "{}"'.format(ip))
-            result = cursor.fetchall()  
-            aliases = cursor.rowcount
-            lst = []
+            if len(ip) > 1:
+              cursor.execute('select username from users where ip = "{}"'.format(ip))
+              result = cursor.fetchall()  
+              aliases = cursor.rowcount
+              lst = []
+                    
+              for count, uname in enumerate(result, 1):
+                lst.append(" {}: {} ".format(count,uname[0]))
+              output = "...".join(lst)
                   
-            for count, uname in enumerate(result, 1):
-              lst.append(" {}: {} ".format(count,uname[0]))
-            output = "...".join(lst)
-                
-            cursor.execute('select follower from followers where followed like "{}"'.format(x))
-            r = cursor.fetchall()
-            n = cursor.rowcount
-                
-            room.message('{} [{}]: I found: {}  *h* !, Real name is {} , age {} with {} follower(s). {} has {} alternate account(s) recorded.({})'.format(rlpic,role,username,rlname,age,n,username,aliases,output))              
-           
+              cursor.execute('select follower from followers where followed like "{}"'.format(x))
+              r = cursor.fetchall()
+              n = cursor.rowcount
+                  
+              room.message('{} [{}]: I found: {}  *h* !, Real name is {} , age {} with {} follower(s). {} has {} alternate account(s) recorded.({})'.format(rlpic,role,username,rlname,age,n,username,aliases,output))              
+            if len(ip) < 1:
+              cursor.execute('select follower from followers where followed like "{}"'.format(x))
+              r = cursor.fetchall()
+              n = cursor.rowcount
+                  
+              room.message('{} [{}]: I found: {}  *h* !, Real name is {} , age {} with {} follower(s). {} has {} alternate account(s) recorded'.format(rlpic,role,username,rlname,age,n,username,0))
       except Error as e:
         print e
       finally:
@@ -881,11 +899,10 @@ class bot(ch.RoomManager):
       pass
   
   def onConnect(self,room):
-    room.message("Welcome to Companion! *waves* Type >help for more information. You should definitely read my documentation at http://chatangu.tk/bot , ")
+    room.message("*waves*  I'm in test mode. NO ADMINS SET. Type >help for more information. You should definitely read my documentation at http://chatangu.tk/bot , ")
     print("ONLINE")
    
-  def onJoin(self, room, user):
-    room.message("Welcome "+ user.name.capitalize())
+  
   
   
   ##############################################################################
@@ -894,11 +911,13 @@ class bot(ch.RoomManager):
   
   ##############################################################################
   
-  def onPMMessage(self, pm, user, body):
+  def onPMMessage(self,pm,user,body):
     self.setNameColor("FFFFFF")
-    self.setFontColor("666666")
-    self.setFontFace("Typewriter")
+    self.setFontColor("CC0033")
+    self.setFontFace("5")
     self.setFontSize(10)
+    self.enableBg()  
+    self.enableRecording()
     
     try:
       cmd, args = body.split(" ", 1)
@@ -938,12 +957,12 @@ class bot(ch.RoomManager):
           dbconfig = read_db_config()
           conn = MySQLConnection(**dbconfig)
           cursor = conn.cursor()
-          cursor.execute('INSERT INTO {}({}) VALUES("{}") '.format(a,b,d))
+          cursor.execute('INSERT INTO {} ({}) VALUES("{}") '.format(a,b,d))
           conn.commit()
           self.pm.message(ch.User(user.name), 'You have just registered with companion. You will now be able to use social/merchant commands. *waves* Type >help for more information. You should definitely read my documentation at http://chatangu.tk/bot ')
             
         else:
-          self.pm.message(ch.User(user.name), 'You are already registered with me!')
+          self.pm.message(ch.User(user.name), ' You are already registered with me!')
           
     
       except Error as e:
@@ -1346,12 +1365,232 @@ class bot(ch.RoomManager):
     def help():
       self.pm.message(ch.User(user.name),' *star* To see General Commands (like say) ,use >general . For Social Commands (like status) , use >social. \n For Merchant Commands (like Currency) , use >merchant. \n Keep in mind many commands may change and some will be eliminated for pm or chat usage only. Updates will be regularly added to my Documentation , http://chatangu.tk/bot ')
     def gcmds():
-      self.pm.message(ch.User(user.name)," *star* General Commands: help , general , merchant , say , random, rooms, math , pm , yt , gi, ud \n , gs , reddit , addAdmin , removeAdmin , admin+ , admin- , mods , ipInfo \n  , whois , whoami, reboot ..")
+      self.pm.message(ch.User(user.name)," *star* General Commands: say, test, mods, random, yt, help, general, social, merchant, addadmin .")
     def scmds():
-      self.pm.message(ch.User(user.name),"Social Commands:   followers  ,follow  ,myfollowers  , showfollowers  , feed  , popularity  ,checkpopularity  ,mostHated \n ,mostLoved  , topTrolls  ,status  ,mood  ,age  , schedule  , randompic  , listFavoriteThings  , showUserComment \n , showRecentComments  ,showCurrency  ,currency  ,rlpic , nickname , whyhate , whylove , \n whystalk , whyfriend ,whyreject , Goodnight , goodnightAll , goodmorning , goodmorningAll \n , +friend ,-friend ,+lover ,-lover ,+hater ,-hater ,+stalker ,-stalker ,+crush \n ,-crush ,+ex ,-ex ,+reject ,-reject , +randompic ,+status ,+mood ,+favoritething \n ,-favoritething ,+userComment ,-userComment ,+comment ,-whyhate ,-whylove ,-whystalk ,-whyfriend \n ,voteHate ,votedLove ,voteTroll , unfollow , blockfollow , unblockfollow , nofollow...")
+      self.pm.message(ch.User(user.name),"Social Commands: register, wos, +wos, nickname, age, rlname, rlpic, mood, status, notifications, private, follow,  followers, following, whoami, whois, popular unfollow, block, unblock  ")
     def mcmds():
       self.pm.message(ch.User(user.name),'NotImplemented')
    
+    
+    """
+    View Followers Command
+    
+    Return: The user's followers or a selected user
+    """
+    def followers(_,var,x):
+      if(_.lower().startswith(("insert into","select *","alter database","create database","create table","delete *","delete from","drop database","drop table"))):
+        self.pm.message(ch.User(user.name),'You tried to perform an invalid operation... Try again or read my Documentation here.. http://chatangu.tk/bot')
+      if ((user.name).startswith(('#','!'))):
+        self.pm.message(ch.User(user.name),'No anons allowed ;)')
+      else:
+        try:
+          dbconfig = read_db_config()
+          conn = MySQLConnection(**dbconfig)
+          cursor = conn.cursor()
+          
+          if (_ == "" and x == 0):
+            cursor.execute('select follower from followers where followed = "{}"'.format(var))
+            rows = cursor.fetchall()
+            results = []
+            self.pm.message(ch.User(user.name),'You have {} followers'.format(cursor.rowcount))
+            for count, row in enumerate(rows, 1):
+                     
+              results.append('{}. {} '.format(count,row[0]))
+            if(cursor.rowcount == 0):
+              pass
+            else:
+              self.pm.message(ch.User(user.name),'... '.join(results))
+         
+          elif (_ == "" and x == 1):
+            cursor.execute('select followed from followers where follower like "{}"'.format(var))
+            rows = cursor.fetchall()
+            results = []
+            self.pm.message(ch.User(user.name),'You are following {} user(s)'.format(cursor.rowcount))
+            for count, row in enumerate(rows, 1):
+                     
+              results.append(str(count)+ ": " + row[0])
+                  
+            if(cursor.rowcount == 0):
+              pass
+            else:
+              self.pm.message(ch.User(user.name),'... '.join(results))   
+         
+          
+          
+          else:
+            cursor.execute("SELECT({}) FROM({}) WHERE {} LIKE '{}'".format('username','users','username',_))
+          
+            rows = cursor.fetchone()
+          
+            if(rows == None):
+              self.pm.message(ch.User(user.name),' *stop* That user doesn\'t exist')
+            
+            else:
+             
+              if(_ != "" and x == 0):
+                cursor.execute('select follower from followers where followed = "{}"'.format(_))
+                rows = cursor.fetchall()
+                results = []
+                self.pm.message(ch.User(user.name),'{} has {} followers'.format(_,cursor.rowcount))
+                for count, row in enumerate(rows, 1):
+                       
+                  results.append(str(count)+ ": " + row[0])
+                      
+                if(cursor.rowcount == 0):
+                  pass
+                else:
+                  self.pm.message(ch.User(user.name),'... '.join(results))
+              elif (_ != "" and x == 1):
+                cursor.execute('select followed from followers where follower like "{}"'.format(_))
+                rows = cursor.fetchall()
+                self.pm.message(ch.User(user.name),'{} is following {} user(s)'.format(_,cursor.rowcount))
+                results = []
+                
+                for count, row in enumerate(rows, 1):
+                       
+                  results.append(str(count)+ ": " + row[0])
+                        
+                if(cursor.rowcount == 0):
+                  pass
+                else:
+                  self.pm.message(ch.User(user.name),'... '.join(results))      
+        
+        except Error as e:
+          print e
+        finally:
+          cursor.close()
+          conn.close()
+    
+    """
+    Whoami Command
+    
+    @return:  Returns the user's name , if no nickname , the user's rl name , age, rl pic, role, and if top percent of followed users  
+    """  
+    def who(x,y):
+      try:
+          dbconfig = read_db_config()
+          conn = MySQLConnection(**dbconfig)
+          cursor = conn.cursor()
+          cursor.execute('select * from users where username like "{}"'.format(x))
+          rows = cursor.fetchone()
+          row = rows
+          #assign
+          rlpic = row[7]
+          role = row[2]
+          ip = row[1]
+          username = row[3]
+          rlname =  row[13]
+          age = row[6]
+          nickname = row[8]
+          
+          
+          
+          if role == 0:
+            role = 'Role: User'
+          if role == 1:
+            role = 'Role: Moderator'
+          if role == 2:
+            role = 'Role: Admin'
+          if role == 3:
+            role = 'Role: Superuser'  
+          if (username == 'Eaaj' or 'Debugger' or 'Classic'):
+            role = "MASTER!"
+          if nickname == None:
+            nickname = ' [n/a] '
+          if rlpic == None:
+            rlpic = ' [n/a] '
+          if age == None:
+            age = ' [n/a] '
+          if rlname == None:
+            rlname = ' [n/a] '  
+            
+          
+          if y == 0:  
+            try:
+              if len(ip) > 1:
+                cursor.execute('select username from users where ip = "{}"'.format(ip))
+                result = cursor.fetchall()  
+                aliases = cursor.rowcount
+                lst = []
+                  
+                for count, uname in enumerate(result, 1):
+                  lst.append(" {}: {} ".format(count,uname[0]))
+                output = "...".join(lst)
+                
+                cursor.execute('select follower from followers where followed = "{}"'.format(x))
+                r = cursor.fetchall()
+                n = cursor.rowcount
+                print('you tried: select follower from followers where followed = "{}"'.format(x))
+                for x in r:
+                  print x[0]
+                print n
+                
+                  
+                self.pm.message(ch.User(user.name),'{} [{}]: Hey {} *h* , your name is {} , age {} with {} follower(s). You have {} alternate account(s) recorded.({})'.format(rlpic,role,username,rlname,age,n,aliases,output))  
+              if len(ip) < 1:
+                cursor.execute('select follower from followers where followed = "{}"'.format(x))
+                r = cursor.fetchall()
+                n = cursor.rowcount
+                print('you tried: select follower from followers where followed = "{}"'.format(x))
+                for x in r:
+                  print x[0]
+                print n
+                
+                  
+                self.pm.message(ch.User(user.name),'{} [{}]: Hey {} *h* , your name is {} , age {} with {} follower(s). You have {} alternate account(s) recorded.({})'.format(rlpic,role,username,rlname,age,n,0,output)) 
+                
+            except Error as e:
+              print e
+              
+          else:
+            
+            cursor.execute('select username from users where ip = "{}"'.format(ip))
+            result = cursor.fetchall()  
+            aliases = cursor.rowcount
+            lst = []
+                  
+            for count, uname in enumerate(result, 1):
+              lst.append(" {}: {} ".format(count,uname[0]))
+            output = "...".join(lst)
+                
+            cursor.execute('select follower from followers where followed like "{}"'.format(x))
+            r = cursor.fetchall()
+            n = cursor.rowcount
+                
+            self.pm.message(ch.User(user.name),'{} [{}]: I found: {}  *h* !, Real name is {} , age {} with {} follower(s). {} has {} alternate account(s) recorded.({})'.format(rlpic,role,username,rlname,age,n,username,aliases,output))              
+           
+      except Error as e:
+        print e
+      finally:
+        cursor.close()
+        conn.close()
+    
+    """
+    Popularity
+       
+    @return : Users with most followers    
+    """    
+    def popular():
+      try:
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        cursor.execute("SELECT followed, count(*) FROM followers GROUP BY followed ORDER BY count(*) DESC LIMIT 25")
+        rows = cursor.fetchall()
+        storage = []
+        
+        for count, x in enumerate(rows, 1):
+          user = x[0]
+          followers = x[1]
+          storage.append(' #{} {} ({})  '.format(count,user,followers))
+        
+          
+        self.pm.message(ch.User(user.name),"Here are the top 25 most popular users! (based on followers) *h* : {}".format(",".join(storage)))  
+      except Error as e:
+        print e
+      finally:
+        conn.close()
+        cursor.close()
     
     
     """
@@ -1378,6 +1617,7 @@ class bot(ch.RoomManager):
       prfx and 'nickname': lambda _: update('users','nickname','username',user.name,_,'nickname',0) ,
       prfx and 'age': lambda _: update('users','age','username',user.name,_,'age',0),
       prfx and 'rlname': lambda _: update('users','rlname','username',user.name,_,'rlname',0),
+      prfx and 'rlpic': lambda _: update('users','rlpic','username',user.name,_,'rlpic',0),
       prfx and 'mood': lambda _: update('users','mood','username',user.name,_,'mood',0),
       prfx and 'status': lambda _: update('users','status','username',user.name,_,'status',0),
       prfx and 'notifications': lambda _: update('users','notifications','username',user.name,_,None,1),
@@ -1389,8 +1629,13 @@ class bot(ch.RoomManager):
       prfx and 'help': lambda _: help(),
       prfx and 'general': lambda _: gcmds(),
       prfx and 'social': lambda _: scmds(),
-      prfx and 'merchant': lambda _: mcmds()
-        
+      prfx and 'merchant': lambda _: mcmds(),
+      prfx and 'followers':lambda _: followers(_,user.name,0),
+      prfx and 'following':lambda _: followers(_,user.name,1),
+      prfx and 'whoami':lambda _: who(user.name,0),
+      prfx and 'whois':lambda _: who(_,1),
+      prfx and 'popular':lambda _: popular()
+      
       }[cmd](_)
     
       self.pm.message(ch.User(user.name), result)

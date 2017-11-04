@@ -3288,7 +3288,7 @@ class _User(object):
 		self._msgs = list()
 		self._nameColor = "000"
 		self._fontSize = 12
-		self._fontFace = "0"
+		self._fontFace = "2"
 		self._fontColor = "000"
 		self._mbg = False
 		self._mrec = False
