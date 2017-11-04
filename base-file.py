@@ -914,7 +914,7 @@ class bot(ch.RoomManager):
   def onPMMessage(self,pm,user,body):
     self.setNameColor("FFFFFF")
     self.setFontColor("CC0033")
-    self.setFontFace("5")
+    self.setFontFace("1")
     self.setFontSize(10)
     self.enableBg()  
     self.enableRecording()
@@ -1654,6 +1654,6 @@ class bot(ch.RoomManager):
     
 rooms = ["tenzaishikai"]
 username = "iceball"
-password = "onepiece"
+password = "one.piece"
 
 bot.easy_start(rooms,username,password)
