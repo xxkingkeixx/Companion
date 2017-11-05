@@ -1291,7 +1291,8 @@ class bot(ch.RoomManager):
               try:
                 cursor.execute('INSERT INTO {}({},{}) VALUES("{}","{}") '.format(tablename3,column5,column6,_,var))
                 conn.commit()
-                self.pm.message(ch.User(user.name),'You are now following {}! You will receive notifications whenever this user has an update! *star* '.format(_))
+                self.pm.message(ch.User(user.name),'You are now following {}! You will receive notifications whenever this user has an update!  '.format(_))
+                self.pm.message(ch.User(_),'{} is now following you'.format(user.name))
               except Error as e:
                 self.pm.message(ch.User(user.name),' *stop* You have already followed this person!.')
               finally:
