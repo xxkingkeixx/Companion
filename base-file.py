@@ -1654,6 +1654,6 @@ class bot(ch.RoomManager):
     
 rooms = ["tenzaishikai"]
 username = "dashboard"
-password = "One.piece1"
+password = "one.piece1"
 
 bot.easy_start(rooms,username,password)
