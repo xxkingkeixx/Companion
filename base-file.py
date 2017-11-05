@@ -913,8 +913,8 @@ class bot(ch.RoomManager):
   
   def onPMMessage(self,pm,user,body):
     self.setNameColor("FFFFFF")
-    self.setFontColor("CC0033")
-    self.setFontFace("1")
+    self.setFontColor("666666")
+    self.setFontFace("Verdana")
     self.setFontSize(10)
     self.enableBg()  
     self.enableRecording()
