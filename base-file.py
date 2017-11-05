@@ -1653,7 +1653,7 @@ class bot(ch.RoomManager):
 ###############################################################################
     
 rooms = ["tenzaishikai"]
-username = "iceball"
-password = "one.piece"
+username = "dashboard"
+password = "One.piece1"
 
 bot.easy_start(rooms,username,password)

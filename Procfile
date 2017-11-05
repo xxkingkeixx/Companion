@@ -1,1 +1,2 @@
-web: python base-file.py
+
+worker: python base-file.py
