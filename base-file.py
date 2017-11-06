@@ -1544,22 +1544,26 @@ class bot(ch.RoomManager):
               print e
               
           else:
-            
-            cursor.execute('select username from users where ip = "{}"'.format(ip))
-            result = cursor.fetchall()  
-            aliases = cursor.rowcount
-            lst = []
+            if len(ip) > 1:
+              cursor.execute('select username from users where ip = "{}"'.format(ip))
+              result = cursor.fetchall()  
+              aliases = cursor.rowcount
+              lst = []
+                    
+              for count, uname in enumerate(result, 1):
+                lst.append(" {}: {} ".format(count,uname[0]))
+              output = "...".join(lst)
                   
-            for count, uname in enumerate(result, 1):
-              lst.append(" {}: {} ".format(count,uname[0]))
-            output = "...".join(lst)
+              cursor.execute('select follower from followers where followed like "{}"'.format(x))
+              r = cursor.fetchall()
+              n = cursor.rowcount
                 
-            cursor.execute('select follower from followers where followed like "{}"'.format(x))
-            r = cursor.fetchall()
-            n = cursor.rowcount
-                
-            self.pm.message(ch.User(user.name),'{} [{}]: I found: {}  *h* !, Real name is {} , age {} with {} follower(s). {} has {} alternate account(s) recorded.({})'.format(rlpic,role,username,rlname,age,n,username,aliases,output))              
-           
+              self.pm.message(ch.User(user.name),'{} [{}]: I found: {}  *h* !, Real name is {} , age {} with {} follower(s). {} has {} alternate account(s) recorded.({})'.format(rlpic,role,username,rlname,age,n,username,aliases,output))              
+          if len(ip) < 1:
+              cursor.execute('select follower from followers where followed like "{}"'.format(x))
+              r = cursor.fetchall()
+              n = cursor.rowcount 
+              self.pm.message(ch.User(user.name),'{} [{}]: I found: {}  *h* !, Real name is {} , age {} with {} follower(s). {} has {} alternate account(s) recorded.'.format(rlpic,role,username,rlname,age,n,username,0))  
       except Error as e:
         print e
       finally:
