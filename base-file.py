@@ -1658,7 +1658,7 @@ class bot(ch.RoomManager):
 
 ###############################################################################
     
-rooms = ["network"]
+rooms = ["tenzaishikai"]
 username = "dashboard"
 password = "one.piece1"
 
