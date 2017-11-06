@@ -899,7 +899,7 @@ class bot(ch.RoomManager):
       pass
   
   def onConnect(self,room):
-    room.message("*waves*  I'm in test mode. NO ADMINS SET. Type >help for more information. You should definitely read my documentation at http://chatangu.tk/bot , ")
+    room.message("*waves*  Procfile declares types -> worker  I'm in test mode. Type >help for more information. You should definitely read my documentation at http://chatangu.tk/bot , ")
     print("ONLINE")
    
   
@@ -1653,7 +1653,7 @@ class bot(ch.RoomManager):
 
 ###############################################################################
     
-rooms = ["tenzaishikai"]
+rooms = ["network"]
 username = "dashboard"
 password = "one.piece1"
 
