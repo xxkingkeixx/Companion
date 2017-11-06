@@ -899,7 +899,7 @@ class bot(ch.RoomManager):
       pass
   
   def onConnect(self,room):
-    room.message("*waves*  Procfile declares types -> worker  I'm in test mode. Type >help for more information. You should definitely read my documentation at http://chatangu.tk/bot , ")
+    room.message("*waves*  Procfile declares types -> worker  I'm in test mode.  , ")
     print("ONLINE")
    
   
@@ -923,7 +923,8 @@ class bot(ch.RoomManager):
       cmd, args = body.split(" ", 1)
     except:
       cmd, args = body, ""      
-    
+   
+    print "[PM] {} : {}".format(user.name,body) 
     """
     HTML PARSE
     
@@ -1657,7 +1658,7 @@ class bot(ch.RoomManager):
 
 ###############################################################################
     
-rooms = ["tenzaishikai"]
+rooms = ["network"]
 username = "dashboard"
 password = "one.piece1"
 
