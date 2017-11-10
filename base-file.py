@@ -820,6 +820,23 @@ class bot(ch.RoomManager):
       finally:
         cursor.close()
         conn.close()
+    """
+    Owner
+    """
+    def owner():
+      room.message('{} owns this room'.format(room.ownername))
+    
+    """
+    Join & Leave
+    """
+    def joinRoom(room):
+      _ = room
+      room.message('Joining {}..'.format(_))
+    
+    def leaveRoom(room):
+      _ = room
+      room.message('Left {}..'.format(_))
+    
     
     """
     Popularity
@@ -865,9 +882,12 @@ class bot(ch.RoomManager):
       prfx and 'random': lambda _: str(random.randrange(int(_))),
       prfx and 'rooms': lambda _:  "I'm in "+ str(len(rooms)) +" rooms , " + ", ".join(rooms),
       prfx and 'yt': lambda _: yt(_),
+      prfx and 'join': lambda _: joinRoom(_),
+      prfx and 'leave': lambda _: leaveRoom(_),
       prfx and '+wos': lambda _: insert('wallofshame','message',_),
       prfx and 'wos': lambda _: simpleSelect('wallofshame','message',_),
       prfx and 'addadmin': lambda _: addadmin('users','username',_),
+      prfx and 'owner': lambda _: owner(),
       prfx and 'mods' : lambda _: mods(_),
       prfx and 'nickname': lambda _: update('users','nickname','username',user.name,_,'nickname',0) ,
       prfx and 'age': lambda _: update('users','age','username',user.name,_,'age',0),
