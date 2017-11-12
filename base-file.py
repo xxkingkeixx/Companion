@@ -824,18 +824,16 @@ class bot(ch.RoomManager):
     Owner
     """
     def owner():
-      room.message('{} owns this room'.format(room.ownername))
+      room.message('Results: \n {} owns this room'.format(room.ownername))
     
     """
     Join & Leave
     """
-    def joinRoom(room):
-      _ = room
-      room.message('Joining {}..'.format(_))
-    
-    def leaveRoom(room):
-      _ = room
-      room.message('Left {}..'.format(_))
+    def roomManager(room,mode):
+      if mode == 0:
+        rooms.append(room)
+      else:
+        rooms.remove(room)
     
     
     """
@@ -882,8 +880,8 @@ class bot(ch.RoomManager):
       prfx and 'random': lambda _: str(random.randrange(int(_))),
       prfx and 'rooms': lambda _:  "I'm in "+ str(len(rooms)) +" rooms , " + ", ".join(rooms),
       prfx and 'yt': lambda _: yt(_),
-      prfx and 'join': lambda _: joinRoom(_),
-      prfx and 'leave': lambda _: leaveRoom(_),
+      prfx and 'join': lambda _: roomManager(_,0),
+      prfx and 'leave': lambda _: roomManager(_,1),
       prfx and '+wos': lambda _: insert('wallofshame','message',_),
       prfx and 'wos': lambda _: simpleSelect('wallofshame','message',_),
       prfx and 'addadmin': lambda _: addadmin('users','username',_),
