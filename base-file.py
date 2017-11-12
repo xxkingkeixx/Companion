@@ -824,7 +824,7 @@ class bot(ch.RoomManager):
     Owner
     """
     def owner():
-      room.message('Results: <br> {} owns this room'.format(room.ownername))
+      room.message('Results: &nbsp; {} owns this room'.format(room.ownername))
     
     """
     Join & Leave
