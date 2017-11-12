@@ -877,7 +877,7 @@ class bot(ch.RoomManager):
     try:
       result = {
       prfx and 'say': lambda _:  _,
-      prfx and 'test': lambda _: 'Working!',
+      prfx and 'test': lambda _: '<br/> Working!',
       prfx and 'pm': lambda _: pmcmd(_),
       prfx and 'random': lambda _: str(random.randrange(int(_))),
       prfx and 'rooms': lambda _:  "I'm in "+ str(len(rooms)) +" rooms , " + ", ".join(rooms),
@@ -1678,7 +1678,7 @@ class bot(ch.RoomManager):
 
 ###############################################################################
     
-rooms = ["tenzaishikai"]
+rooms = ["network"]
 username = "dashboard"
 password = "one.piece1"
 
