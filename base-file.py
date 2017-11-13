@@ -5,6 +5,7 @@
 
 """
 import ch
+import requests
 import pathlib
 from pathlib import Path
 import random
@@ -35,6 +36,7 @@ import threading
 import urllib
 import urllib2
 import math
+import resp
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
 from xml.etree import cElementTree as ET
@@ -829,17 +831,25 @@ class bot(ch.RoomManager):
     Join & Leave
     """
     def roomManager(_,mode):
-      if mode == 0:
-        rooms.append(_)
-        room.message('Joining {}...'.format(_))
+      try:
+        url = "http://ust.chatango.com/groupinfo/"+_[0]+"/"+_[1]+"/"+_+"/gprofile.xml"
+        resp = requests.get(url)
+        if resp.status_code == 404:
+          room.message('This room doesn\'t exist')
+        if _ in self.roomnames:
+          room.message('I am already in {}'.format(_))
+        else:  
+          if mode == 0:
+            rooms.append(_)
+            room.message('Joining {}...'.format(_))
+            self.joinRoom(_)
+          if mode == 1:
+            rooms.remove(_)
+            room.message('Leaving {}...'.format(_))
+            self.leaveRoom(_)
+      except Error as e:
+        room.message(str(e))
         
-        self.joinRoom(_)
-      if mode == 1:
-        rooms.remove(_)
-        room.message('Leaving {}...'.format(_))
-        
-        self.leaveRoom(_)
-    
     """
     Popularity
        
