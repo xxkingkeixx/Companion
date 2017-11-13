@@ -905,7 +905,11 @@ class bot(ch.RoomManager):
         room.message('ok')
     
     def code(_):
-      room.message((eval(_))
+      try:
+        a = eval(args)
+        room.message(str(a))
+      except Exception as e:
+        room.message(str(e))  
         
     """
     The bot commands
