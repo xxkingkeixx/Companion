@@ -904,7 +904,8 @@ class bot(ch.RoomManager):
         self.setNameColor('{}'.format(__))
         room.message('ok')
     
-    
+    def code(_):
+      room.message(str(eval(_)))
         
     """
     The bot commands
@@ -918,6 +919,7 @@ class bot(ch.RoomManager):
       prfx and 'say': lambda _:  _,
       prfx and 'test': lambda _: '<br/> <i>Working</i> <b> hey !',
       prfx and 'pm': lambda _: pmcmd(_),
+      prfx and 'e': lambda _: code(_),
       prfx and 'random': lambda _: str(random.randrange(int(_))),
       prfx and 'rooms': lambda _:  "I'm in "+ str(len(rooms)) +" rooms , " + ", ".join(rooms),
       prfx and 'yt': lambda _: yt(_),
