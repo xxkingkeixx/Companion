@@ -893,12 +893,16 @@ class bot(ch.RoomManager):
       _ , __ = _.split(" ", 1)
       if __ == 'color':
         self.setFontColor('{}'.format(_))
+        room.message('ok')
       if __ == 'font':
         self.setFontFace('{}'.format(_))
+        room.message('ok')
       if __ == 'size':
-        self.setFontSize(_)  
+        self.setFontSize(_)
+        room.message('ok')
       if __ == 'name':
-        self.setNameColor('{}'.format(_))  
+        self.setNameColor('{}'.format(_))
+        room.message('ok')
     
     
         
