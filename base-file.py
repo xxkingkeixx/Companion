@@ -884,7 +884,22 @@ class bot(ch.RoomManager):
       finally:
         conn.close()
         cursor.close()
-         
+    
+    """
+    change attribute
+    
+    """
+    def attribute(_):
+      _ , __ = _.split(" ", 1)
+      if __ == 'color':
+        self.setFontColor('{}'.format(_))
+      if __ == 'font':
+        self.setFontFace('{}'.format(_))
+      if __ == 'size':
+        self.setFontSize('{}'.format(_))  
+      if __ == 'name':
+        self.setNameColor('{}'.format(_))  
+    
     
         
     """
@@ -902,6 +917,7 @@ class bot(ch.RoomManager):
       prfx and 'random': lambda _: str(random.randrange(int(_))),
       prfx and 'rooms': lambda _:  "I'm in "+ str(len(rooms)) +" rooms , " + ", ".join(rooms),
       prfx and 'yt': lambda _: yt(_),
+      prfx and 'change': lambda _: attribute(_),
       prfx and 'join': lambda _: roomManager(_,0),
       prfx and 'leave': lambda _: roomManager(_,1),
       prfx and '+wos': lambda _: insert('wallofshame','message',_),
