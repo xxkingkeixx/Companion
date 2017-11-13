@@ -837,18 +837,24 @@ class bot(ch.RoomManager):
         if resp.status_code == 404:
           room.message('This room doesn\'t exist')
           return
-        if _ in self.roomnames:
-          room.message('I am already in {}'.format(_))
-          return
+        
         else:  
           if mode == 0:
-            rooms.append(_)
-            room.message('Joining {}...'.format(_))
-            self.joinRoom(_)
+            if _ in self.roomnames:
+             room.message('I am already in {}'.format(_))
+             return
+            else:
+              rooms.append(_)
+              room.message('Joining {}...'.format(_))
+              self.joinRoom(_)
           if mode == 1:
-            rooms.remove(_)
-            room.message('Leaving {}...'.format(_))
-            self.leaveRoom(_)
+            if _ not in self.roomnames:
+              room.message('I\'m not in {}'.format(_))
+              return
+            else:
+              rooms.remove(_)
+              room.message('Leaving {}...'.format(_))
+              self.leaveRoom(_)
       except Error as e:
         room.message(str(e))
         
