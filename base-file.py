@@ -832,10 +832,10 @@ class bot(ch.RoomManager):
     def roomManager(room,mode):
       if mode == 0:
         room.message('Joining {}...'.format(room))
-        rooms.append(room)
+        self.joinRoom(room)
       else:
         room.message('Leaving {}...'.format(room))
-        rooms.remove(room)
+        self.leaveRoom(room)
     
     
     """
