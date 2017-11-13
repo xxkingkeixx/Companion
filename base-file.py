@@ -829,15 +829,17 @@ class bot(ch.RoomManager):
     """
     Join & Leave
     """
-    def roomManager(room,mode):
+    def roomManager(_,mode):
       if mode == 0:
+        rooms.append(_)
         room.message('Joining {}...'.format(room))
-        rooms.append(room)
-        self.joinRoom(room)
-      else:
-        room.message('Leaving {}...'.format(room))
-        rooms.remove(room)
-        self.leaveRoom(room)
+        
+        self.joinRoom(_)
+      if mode == 1:
+        rooms.remove(_)
+        room.message('Leaving {}...'.format(_))
+        
+        self.leaveRoom(_)
     
     """
     Popularity
