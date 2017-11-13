@@ -905,7 +905,7 @@ class bot(ch.RoomManager):
         room.message('ok')
     
     def code(_):
-      room.message(str(eval(_)))
+      room.message((eval(_))
         
     """
     The bot commands
