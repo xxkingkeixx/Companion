@@ -38,6 +38,7 @@ pypl==40.10
 python-dateutil==1.5
 pytz==2012rc0
 requests==2.2.1
+resp==0.1.0
 scipy==0.13.3
 SecretStorage==2.0.0
 simplegeneric==0.8.1
