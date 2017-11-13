@@ -744,8 +744,7 @@ class bot(ch.RoomManager):
             role = 'Role: Admin'
           if role == 3:
             role = 'Role: Superuser'  
-          if (username == 'Eaaj' or 'Debugger' or 'Classic'):
-            role = "MASTER!"
+          
           if nickname == None:
             nickname = ' [n/a] '
           if rlpic == None:
