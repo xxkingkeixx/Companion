@@ -906,7 +906,7 @@ class bot(ch.RoomManager):
     
     def code(_):
       try:
-        a = eval(args)
+        a = eval(_)
         room.message(str(a))
       except Exception as e:
         room.message(str(e))  
