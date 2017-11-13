@@ -896,7 +896,7 @@ class bot(ch.RoomManager):
       if __ == 'font':
         self.setFontFace('{}'.format(_))
       if __ == 'size':
-        self.setFontSize('{}'.format(_))  
+        self.setFontSize(_)  
       if __ == 'name':
         self.setNameColor('{}'.format(_))  
     
