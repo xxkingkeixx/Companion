@@ -891,17 +891,17 @@ class bot(ch.RoomManager):
     """
     def attribute(_):
       _ , __ = _.split(" ", 1)
-      if __ == 'color':
-        self.setFontColor('{}'.format(_))
+      if _ == 'color':
+        self.setFontColor('{}'.format(__))
         room.message('ok')
-      if __ == 'font':
-        self.setFontFace('{}'.format(_))
+      if _ == 'font':
+        self.setFontFace('{}'.format(__))
         room.message('ok')
-      if __ == 'size':
-        self.setFontSize(_)
+      if _ == 'size':
+        self.setFontSize(__)
         room.message('ok')
-      if __ == 'name':
-        self.setNameColor('{}'.format(_))
+      if _ == 'name':
+        self.setNameColor('{}'.format(__))
         room.message('ok')
     
     
