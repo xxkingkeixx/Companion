@@ -836,8 +836,10 @@ class bot(ch.RoomManager):
         resp = requests.get(url)
         if resp.status_code == 404:
           room.message('This room doesn\'t exist')
+          return
         if _ in self.roomnames:
           room.message('I am already in {}'.format(_))
+          return
         else:  
           if mode == 0:
             rooms.append(_)
