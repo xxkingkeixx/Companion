@@ -875,10 +875,10 @@ class bot(ch.RoomManager):
         for count, x in enumerate(rows, 1):
           user = x[0]
           followers = x[1]
-          storage.append(' #{} {} ({})  '.format(count,user,followers))
+          storage.append(' #{} {} ({})<br/>'.format(count,user,followers))
         
           
-        room.message("Here are the top 25 most popular users! (based on followers) *h* : {}".format(",".join(storage)))  
+        room.message("Here are the top 25 most popular users! (based on followers) *h* : {}".format(",".join(storage)), True)
       except Error as e:
         print e
       finally:
