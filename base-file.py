@@ -1072,6 +1072,11 @@ class bot(ch.RoomManager):
      else:
         self.pm.message(ch.User(user.name), 'You need to register.')
     
+    def onPMContactOnline(pm,user):
+      self.pm.message(ch.User('debugger'), '{} is online'.format(user))
+      self.pm.message(ch.User(user), 'Welcome Back {}. Master Notified'.format(user))
+      
+    
     """ 
     Outputs Query Result from youtube keyword search 
     @module beautifulsoup
