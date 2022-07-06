@@ -8,7 +8,7 @@ configobj==4.7.2
 configparser==3.5.0
 decorator==3.4.0
 
-html5lib==0.999
+html5lib==0.999999999
 httplib2==0.8
 ipython==1.2.1
 keyring==3.5
